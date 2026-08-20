@@ -1,0 +1,145 @@
+<script>
+// น;า Web App URL ที่ได้จากการ Deploy มาวางในตัวแปรนี้
+const API_URL = "https://script.google.com/macros/s/AKfycbwGbnBIwqY19dDyHJ5MLASa8JHH29TEKjBqmMxlBu_IQ3mYlY_IxIN70mjKYwiBIXHq/exec";
+// ฟังก์ชนสื่อสารกลางแทนที่ ั google.script.run
+async function callApi(action, data = {}) {
+try {
+const response = await fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+body: JSON.stringify({ action: action, data: data })
+});
+return await response.json();
+} catch (err) {
+console.error("API Error:", err);
+throw err;
+}
+}
+// -------------------------------------------------------------
+// ตัวอย่างการปรับเปลี่ยนฟังก์ชน ั JavaScript จากเดิม
+// -------------------------------------------------------------
+// 1. ฟังก์ชน ั handleLogin
+async function handleLogin(e) {
+e.preventDefault();
+const role = document.getElementById('loginRole').value;
+const user = document.getElementById('username').value;
+const pass = document.getElementById('password').value;
+try {
+const res = await callApi('login', { username: user, password: pass, role: role });
+if (res.success) {
+currentUser = res;
+document.getElementById('loginSection').classList.add('hidden');
+document.getElementById('userInfo').classList.remove('hidden');
+let roleLabel = 'ครู';
+if (res.role === 'student') roleLabel = 'นักศึกษา';
+if (res.role === 'admin') roleLabel = 'ผู้ดูแลระบบ';
+document.getElementById('userBadge').innerText = `${res.name} (${roleLabel})`;
+if (res.role === 'student') {
+loadStudentDashboard(res.studentId);
+} else {
+loadTeacherDashboard();
+}
+showToast("เข้าสู่ระบบเรียบร้อยแล้ว", true);
+} else {
+showToast(res.message, false);
+}
+} catch (err) {
+showToast("เกิดข้อผิดพลาดในการเข้าสู่ระบบ: " + err.message, false);
+}
+}
+// 2. ฟังก์ชน ั loadStudentDashboard
+async function loadStudentDashboard(studentId) {
+try {
+const st = await callApi('getStudentData', { studentId: studentId });
+if (!st) {
+showToast("ไม่พบข้อมูลนักศึกษาในระบบ", false);
+return;
+}
+activeFormData = st;
+document.getElementById('studentDashboard').classList.remove('hidden');
+const alertBox = document.getElementById('statusAlert');
+const btnForm = document.getElementById('btnOpenForm');
+alertBox.classList.remove('hidden');
+if (st.status === 'Inactive') {
+alertBox.className = "p-4 rounded-xl bg-red-100 text-red-800 border border-red-200";
+alertBox.innerHTML = `<div><i class="fa-solid fa-lock mr-2"></i><b>สถานะ Inactive:</b> สิทธิของคุณถูกระงับ ไม่ ์
+สามารถแก้ไขข้อมูลค;าร้องได้</div>`;
+btnForm.disabled = true;
+btnForm.onclick = null;
+
+btnForm.className = "w-full bg-slate-100 text-slate-400 font-semibold py-2 rounded-lg text-sm cursor-
+not-allowed border border-slate-200";
+
+} else {
+alertBox.className = "p-4 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-200";
+alertBox.innerHTML = `<div><i class="fa-solid fa-circle-check mr-2"></i><b>สถานะ Active:</b> คุณสามารถเข้า
+ใชงานและแก้ไขค;าร้องได้ปกติ ้ </div>`;
+btnForm.disabled = false;
+btnForm.onclick = openFormModal;
+
+btnForm.className = "w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-
+lg text-sm transition";
+
+}
+document.getElementById('stIdView').innerText = st.studentId;
+document.getElementById('stNameView').innerText = st.prefix + st.fullname;
+document.getElementById('stLevelView').innerText = st.level;
+document.getElementById('stDeptView').innerText = st.department;
+document.getElementById('stNoView').innerText = st.studentNo || '-';
+document.getElementById('stShiftView').innerText = st.shift || '-';
+document.getElementById('stPhoneView').innerText = st.phone || '-';
+document.getElementById('stEmailView').innerText = st.email || '-';
+document.getElementById('stAdvisorView').innerText = st.advisor || '-';
+document.getElementById('editPrefix').value = st.prefix;
+document.getElementById('editFullname').value = st.fullname;
+document.getElementById('editLevel').value = st.level;
+document.getElementById('editDept').value = st.department;
+document.getElementById('editNo').value = st.studentNo;
+document.getElementById('editShift').value = st.shift;
+document.getElementById('editPhone').value = st.phone;
+document.getElementById('editEmail').value = st.email;
+document.getElementById('editAdvisor').value = st.advisor;
+document.getElementById('startDate').value = st.startDate;
+document.getElementById('endDate').value = st.endDate;
+document.getElementById('companyName').value = st.companyName;
+document.getElementById('toPerson').value = st.toPerson;
+document.getElementById('address').value = st.address;
+document.getElementById('companyPhone').value = st.companyPhone;
+document.getElementById('zipcode').value = st.zipcode;
+document.getElementById('coordinatorName').value = st.coordinatorName;
+document.getElementById('coordinatorPos').value = st.coordinatorPos;
+document.getElementById('coordinatorPhone').value = st.coordinatorPhone;
+if (st.province) {
+document.getElementById('province').value = st.province;
+onProvinceChange();
+document.getElementById('district').value = st.district;
+onDistrictChange();
+document.getElementById('subdistrict').value = st.subdistrict;
+}
+} catch (err) {
+showToast("โหลดข้อมูลล้มเหลว: " + err.message, false);
+}
+}
+// 3. ฟังก์ชน ั downloadDoc
+async function downloadDoc(type) {
+const docId = type === 'req' ? "1J0AP1yh1VrahHDhl14B1IXloupND_Ft2QxJ5OFBzmYA" : "1-
+Vl5iUrRP7oWbboLb4bX3YdmsU-_kIg5Cj1Cb79vUE0";
+const docName = type === 'req' ? 'ใบค;าร้อง' : 'หนังสือส่งตัว';
+showToast("ก;าลังสร้างเอกสาร PDF กรุณารอสักครู่...", true);
+try {
+const res = await callApi('generatePDF', { studentId: currentUser.studentId, templateDocId: docId,
+docType: docName });
+if (res.success) {
+const link = document.createElement('a');
+link.href = "data:application/pdf;base64," + res.base64;
+link.download = res.filename;
+link.click();
+showToast("ดาวน์โหลดเอกสารส;าเร็จ", true);
+} else {
+showToast("เกิดข้อผิดพลาด: " + res.message, false);
+}
+} catch (err) {
+showToast("เกิดข้อผิดพลาด: " + err.message, false);
+}
+}
+</script>
