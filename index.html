@@ -1,145 +1,308 @@
-<script>
-// น;า Web App URL ที่ได้จากการ Deploy มาวางในตัวแปรนี้
-const API_URL = "https://script.google.com/macros/s/AKfycbwGbnBIwqY19dDyHJ5MLASa8JHH29TEKjBqmMxlBu_IQ3mYlY_IxIN70mjKYwiBIXHq/exec";
-// ฟังก์ชนสื่อสารกลางแทนที่ ั google.script.run
-async function callApi(action, data = {}) {
-try {
-const response = await fetch(API_URL, {
-method: 'POST',
-headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-body: JSON.stringify({ action: action, data: data })
-});
-return await response.json();
-} catch (err) {
-console.error("API Error:", err);
-throw err;
-}
-}
-// -------------------------------------------------------------
-// ตัวอย่างการปรับเปลี่ยนฟังก์ชน ั JavaScript จากเดิม
-// -------------------------------------------------------------
-// 1. ฟังก์ชน ั handleLogin
-async function handleLogin(e) {
-e.preventDefault();
-const role = document.getElementById('loginRole').value;
-const user = document.getElementById('username').value;
-const pass = document.getElementById('password').value;
-try {
-const res = await callApi('login', { username: user, password: pass, role: role });
-if (res.success) {
-currentUser = res;
-document.getElementById('loginSection').classList.add('hidden');
-document.getElementById('userInfo').classList.remove('hidden');
-let roleLabel = 'ครู';
-if (res.role === 'student') roleLabel = 'นักศึกษา';
-if (res.role === 'admin') roleLabel = 'ผู้ดูแลระบบ';
-document.getElementById('userBadge').innerText = `${res.name} (${roleLabel})`;
-if (res.role === 'student') {
-loadStudentDashboard(res.studentId);
-} else {
-loadTeacherDashboard();
-}
-showToast("เข้าสู่ระบบเรียบร้อยแล้ว", true);
-} else {
-showToast(res.message, false);
-}
-} catch (err) {
-showToast("เกิดข้อผิดพลาดในการเข้าสู่ระบบ: " + err.message, false);
-}
-}
-// 2. ฟังก์ชน ั loadStudentDashboard
-async function loadStudentDashboard(studentId) {
-try {
-const st = await callApi('getStudentData', { studentId: studentId });
-if (!st) {
-showToast("ไม่พบข้อมูลนักศึกษาในระบบ", false);
-return;
-}
-activeFormData = st;
-document.getElementById('studentDashboard').classList.remove('hidden');
-const alertBox = document.getElementById('statusAlert');
-const btnForm = document.getElementById('btnOpenForm');
-alertBox.classList.remove('hidden');
-if (st.status === 'Inactive') {
-alertBox.className = "p-4 rounded-xl bg-red-100 text-red-800 border border-red-200";
-alertBox.innerHTML = `<div><i class="fa-solid fa-lock mr-2"></i><b>สถานะ Inactive:</b> สิทธิของคุณถูกระงับ ไม่ ์
-สามารถแก้ไขข้อมูลค;าร้องได้</div>`;
-btnForm.disabled = true;
-btnForm.onclick = null;
+html_content = """<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบนิเทศและติดตามนักศึกษา</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
 
-btnForm.className = "w-full bg-slate-100 text-slate-400 font-semibold py-2 rounded-lg text-sm cursor-
-not-allowed border border-slate-200";
+  <!-- ==========================================
+       CONFIG: ตั้งค่า Web App URL ของ Apps Script
+       ========================================== -->
+  <script>
+    // ⚠️ เปลี่ยน URL ด้านล่างนี้เป็น Web App URL ที่ได้จากขั้นตอนการ Deploy ใน Google Apps Script
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycby3Z5I3R6NiY0WYE3-nQMObINo48qSVIUO1GgOpEbssl6KQFR6GrB7mh9Mbq86FKybp/exec";
+  </script>
 
-} else {
-alertBox.className = "p-4 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-200";
-alertBox.innerHTML = `<div><i class="fa-solid fa-circle-check mr-2"></i><b>สถานะ Active:</b> คุณสามารถเข้า
-ใชงานและแก้ไขค;าร้องได้ปกติ ้ </div>`;
-btnForm.disabled = false;
-btnForm.onclick = openFormModal;
+  <!-- Navigation Bar -->
+  <nav class="bg-blue-600 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-xl font-bold flex items-center gap-2">
+        <i class="fa-solid font-graduation-cap"></i> ระบบติดตามและนิเทศนักศึกษา
+      </h1>
+      <div id="userMenu" class="hidden flex items-center gap-4">
+        <span id="userInfo" class="text-sm bg-blue-700 px-3 py-1 rounded-full"></span>
+        <button onclick="logout()" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded transition">
+          <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
+        </button>
+      </div>
+    </div>
+  </nav>
 
-btnForm.className = "w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-
-lg text-sm transition";
+  <!-- Main Container -->
+  <div class="max-w-7xl mx-auto p-4 md:p-6">
 
-}
-document.getElementById('stIdView').innerText = st.studentId;
-document.getElementById('stNameView').innerText = st.prefix + st.fullname;
-document.getElementById('stLevelView').innerText = st.level;
-document.getElementById('stDeptView').innerText = st.department;
-document.getElementById('stNoView').innerText = st.studentNo || '-';
-document.getElementById('stShiftView').innerText = st.shift || '-';
-document.getElementById('stPhoneView').innerText = st.phone || '-';
-document.getElementById('stEmailView').innerText = st.email || '-';
-document.getElementById('stAdvisorView').innerText = st.advisor || '-';
-document.getElementById('editPrefix').value = st.prefix;
-document.getElementById('editFullname').value = st.fullname;
-document.getElementById('editLevel').value = st.level;
-document.getElementById('editDept').value = st.department;
-document.getElementById('editNo').value = st.studentNo;
-document.getElementById('editShift').value = st.shift;
-document.getElementById('editPhone').value = st.phone;
-document.getElementById('editEmail').value = st.email;
-document.getElementById('editAdvisor').value = st.advisor;
-document.getElementById('startDate').value = st.startDate;
-document.getElementById('endDate').value = st.endDate;
-document.getElementById('companyName').value = st.companyName;
-document.getElementById('toPerson').value = st.toPerson;
-document.getElementById('address').value = st.address;
-document.getElementById('companyPhone').value = st.companyPhone;
-document.getElementById('zipcode').value = st.zipcode;
-document.getElementById('coordinatorName').value = st.coordinatorName;
-document.getElementById('coordinatorPos').value = st.coordinatorPos;
-document.getElementById('coordinatorPhone').value = st.coordinatorPhone;
-if (st.province) {
-document.getElementById('province').value = st.province;
-onProvinceChange();
-document.getElementById('district').value = st.district;
-onDistrictChange();
-document.getElementById('subdistrict').value = st.subdistrict;
-}
-} catch (err) {
-showToast("โหลดข้อมูลล้มเหลว: " + err.message, false);
-}
-}
-// 3. ฟังก์ชน ั downloadDoc
-async function downloadDoc(type) {
-const docId = type === 'req' ? "1J0AP1yh1VrahHDhl14B1IXloupND_Ft2QxJ5OFBzmYA" : "1-
-Vl5iUrRP7oWbboLb4bX3YdmsU-_kIg5Cj1Cb79vUE0";
-const docName = type === 'req' ? 'ใบค;าร้อง' : 'หนังสือส่งตัว';
-showToast("ก;าลังสร้างเอกสาร PDF กรุณารอสักครู่...", true);
-try {
-const res = await callApi('generatePDF', { studentId: currentUser.studentId, templateDocId: docId,
-docType: docName });
-if (res.success) {
-const link = document.createElement('a');
-link.href = "data:application/pdf;base64," + res.base64;
-link.download = res.filename;
-link.click();
-showToast("ดาวน์โหลดเอกสารส;าเร็จ", true);
-} else {
-showToast("เกิดข้อผิดพลาด: " + res.message, false);
-}
-} catch (err) {
-showToast("เกิดข้อผิดพลาด: " + err.message, false);
-}
-}
-</script>
+    <!-- Toast Alert -->
+    <div id="toast" class="hidden fixed top-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300"></div>
+
+    <!-- 1. LOGIN SECTION -->
+    <div id="loginSection" class="max-w-md mx-auto my-12 bg-white p-8 rounded-xl shadow-md border border-gray-200">
+      <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">เข้าสู่ระบบ</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">สถานะผู้ใช้งาน</label>
+          <select id="loginRole" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="student">นักศึกษา</option>
+            <option value="teacher">อาจารย์นิเทศ</option>
+            <option value="admin">ผู้ดูแลระบบ</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">ชื่อผู้ใช้งาน (Username / รหัสนักศึกษา)</label>
+          <input type="text" id="loginUsername" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">รหัสผ่าน (Password)</label>
+          <input type="password" id="loginPassword" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <button type="submit" id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition flex justify-center items-center gap-2">
+          <span>เข้าสู่ระบบ</span>
+          <i id="loginSpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 2. MAIN DASHBOARD SECTION -->
+    <div id="dashboardSection" class="hidden space-y-6">
+
+      <!-- Navigation Tabs -->
+      <div class="flex border-b border-gray-200 bg-white rounded-t-lg px-4 pt-2">
+        <button onclick="switchTab('tabStats')" class="tab-btn px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600">ภาพรวม (Dashboard)</button>
+        <button onclick="switchTab('tabForm')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">บันทึกข้อมูลนักศึกษา</button>
+        <button onclick="switchTab('tabSupervision')" class="tab-btn px-4 py-2 font-medium text-gray-500 hover:text-blue-600">บันทึกการนิเทศ</button>
+      </div>
+
+      <!-- Tab Content: Dashboard Stats -->
+      <div id="tabStats" class="tab-content bg-white p-6 rounded-b-lg shadow-sm border space-y-4">
+        <h3 class="text-xl font-bold text-gray-800">สรุปข้อมูลระบบ</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p class="text-sm text-blue-600 font-medium">จำนวนนักศึกษาทั้งหมด</p>
+            <p id="statTotalStudents" class="text-3xl font-bold text-blue-900 mt-1">0</p>
+          </div>
+          <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p class="text-sm text-green-600 font-medium">ได้รับการนิเทศแล้ว</p>
+            <p id="statSupervised" class="text-3xl font-bold text-green-900 mt-1">0</p>
+          </div>
+          <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p class="text-sm text-yellow-600 font-medium">รอรับการนิเทศ</p>
+            <p id="statPending" class="text-3xl font-bold text-yellow-900 mt-1">0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Student Form -->
+      <div id="tabForm" class="tab-content hidden bg-white p-6 rounded-b-lg shadow-sm border space-y-4">
+        <h3 class="text-xl font-bold text-gray-800">กรอกข้อมูลรายละเอียดนักศึกษา</h3>
+        <form id="studentDataForm" onsubmit="handleSaveStudentForm(event)" class="space-y-4 max-w-2xl">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">รหัสนักศึกษา</label>
+              <input type="text" id="stdId" required class="w-full p-2 border rounded-lg">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">ชื่อ-นามสกุล</label>
+              <input type="text" id="stdName" required class="w-full p-2 border rounded-lg">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">สถานที่ฝึกงาน / สถานประกอบการ</label>
+              <input type="text" id="stdCompany" required class="w-full p-2 border rounded-lg">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600 mb-1">เบอร์โทรศัพท์</label>
+              <input type="text" id="stdPhone" required class="w-full p-2 border rounded-lg">
+            </div>
+          </div>
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg transition">
+            บันทึกข้อมูล
+          </button>
+        </form>
+      </div>
+
+      <!-- Tab Content: Supervision Form & PDF Export -->
+      <div id="tabSupervision" class="tab-content hidden bg-white p-6 rounded-b-lg shadow-sm border space-y-4">
+        <h3 class="text-xl font-bold text-gray-800">บันทึกผลการนิเทศและออกเอกสาร PDF</h3>
+        <form id="supervisionForm" onsubmit="handleSaveSupervision(event)" class="space-y-4 max-w-2xl">
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">เลือกนักศึกษา</label>
+            <input type="text" id="supStudentId" placeholder="ระบุรหัสนักศึกษา" required class="w-full p-2 border rounded-lg">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">ผลการประเมิน / ข้อเสนอแนะ</label>
+            <textarea id="supNotes" rows="4" required class="w-full p-2 border rounded-lg"></textarea>
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition">
+              บันทึกการนิเทศ
+            </button>
+            <button type="button" onclick="handleGeneratePDF()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-2 rounded-lg transition flex items-center gap-2">
+              <i class="fa-solid fa-file-pdf"></i> ออกเอกสาร PDF
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript Frontend Handler -->
+  <script>
+    let currentUser = null;
+
+    // --- Helper Function: ส่งคำขอไป Google Apps Script API via fetch() ---
+    async function callGASApi(action, payload = {}) {
+      try {
+        const response = await fetch(GAS_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8', // ป้องกัน CORS Preflight Options Trigger ใน GAS
+          },
+          body: JSON.stringify({ action: action, ...payload })
+        });
+        return await response.json();
+      } catch (error) {
+        console.error("API Call Error:", error);
+        throw error;
+      }
+    }
+
+    // --- Toast Alert Notification ---
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.className = `fixed top-5 right-5 z-50 px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300 ${isSuccess ? 'bg-green-600' : 'bg-red-600'}`;
+      toast.classList.remove('hidden');
+      setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+    }
+
+    // --- Login Handler ---
+    async function handleLogin(event) {
+      event.preventDefault();
+      const role = document.getElementById('loginRole').value;
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+
+      document.getElementById('loginSpinner').classList.remove('hidden');
+
+      try {
+        const res = await callGASApi('login', { username, password, role });
+        document.getElementById('loginSpinner').classList.add('hidden');
+
+        if (res.success) {
+          currentUser = res.userData || { username, role };
+          showToast("เข้าสู่ระบบสำเร็จ");
+          document.getElementById('loginSection').classList.add('hidden');
+          document.getElementById('dashboardSection').classList.remove('hidden');
+          document.getElementById('userMenu').classList.remove('hidden');
+          document.getElementById('userInfo').innerText = `${username} (${role})`;
+          loadDashboardStats();
+        } else {
+          showToast(res.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง", false);
+        }
+      } catch (err) {
+        document.getElementById('loginSpinner').classList.add('hidden');
+        showToast("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์", false);
+      }
+    }
+
+    // --- Logout Handler ---
+    function logout() {
+      currentUser = null;
+      document.getElementById('dashboardSection').classList.add('hidden');
+      document.getElementById('userMenu').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('loginForm').reset();
+      showToast("ออกจากระบบเรียบร้อย");
+    }
+
+    // --- Tab Switching ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+    }
+
+    // --- Load Dashboard Data ---
+    async function loadDashboardStats() {
+      try {
+        const res = await callGASApi('getDashboardStats', { userData: currentUser });
+        if (res.success) {
+          document.getElementById('statTotalStudents').innerText = res.totalStudents || 0;
+          document.getElementById('statSupervised').innerText = res.supervised || 0;
+          document.getElementById('statPending').innerText = res.pending || 0;
+        }
+      } catch (err) {
+        console.error("Failed to load stats", err);
+      }
+    }
+
+    // --- Save Student Form ---
+    async function handleSaveStudentForm(event) {
+      event.preventDefault();
+      const formData = {
+        studentId: document.getElementById('stdId').value,
+        name: document.getElementById('stdName').value,
+        company: document.getElementById('stdCompany').value,
+        phone: document.getElementById('stdPhone').value
+      };
+
+      try {
+        const res = await callGASApi('saveStudentForm', { formData });
+        showToast(res.message || "บันทึกข้อมูลสำเร็จ", res.success);
+        if (res.success) document.getElementById('studentDataForm').reset();
+      } catch (err) {
+        showToast("บันทึกข้อมูลไม่สำเร็จ", false);
+      }
+    }
+
+    // --- Save Supervision ---
+    async function handleSaveSupervision(event) {
+      event.preventDefault();
+      const payload = {
+        studentId: document.getElementById('supStudentId').value,
+        notes: document.getElementById('supNotes').value
+      };
+
+      try {
+        const res = await callGASApi('saveSupervision', { payload });
+        showToast(res.message || "บันทึกการนิเทศสำเร็จ", res.success);
+      } catch (err) {
+        showToast("บันทึกการนิเทศไม่สำเร็จ", false);
+      }
+    }
+
+    // --- Generate PDF Document ---
+    async function handleGeneratePDF() {
+      const studentId = document.getElementById('supStudentId').value;
+      if (!studentId) {
+        showToast("กรุณาระบุรหัสนักศึกษาเพื่อออก PDF", false);
+        return;
+      }
+
+      showToast("กำลังสร้างเอกสาร PDF กรุณารอสักครู่...");
+      try {
+        const res = await callGASApi('generatePDF', { studentId: studentId });
+        if (res.success && res.pdfUrl) {
+          window.open(res.pdfUrl, '_blank');
+          showToast("สร้างเอกสาร PDF เรียบร้อยแล้ว");
+        } else {
+          showToast(res.message || "ไม่สามารถออกเอกสาร PDF ได้", false);
+        }
+      } catch (err) {
+        showToast("เกิดข้อผิดพลาดในการสร้าง PDF", false);
+      }
+    }
+  </script>
+</body>
+</html>
+"""
+
+import os
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Created index.html successfully")
