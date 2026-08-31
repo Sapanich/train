@@ -105,7 +105,6 @@
       
       <!-- DASHBOARD STATS SECTION -->
       <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <!-- Stat 1 -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
             <span id="lblStatTotalTitle" class="text-xs font-bold text-slate-500">นักศึกษาทั้งหมด</span>
@@ -114,7 +113,6 @@
           <div id="statTotalStudents" class="text-2xl font-bold text-slate-800 mt-2">0</div>
         </div>
 
-        <!-- Stat 2 -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-500">กรอกข้อมูลคำร้อง</span>
@@ -123,7 +121,6 @@
           <div id="statHasReqInfo" class="text-2xl font-bold text-amber-600 mt-2">0 / 0</div>
         </div>
 
-        <!-- Stat 3 -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-500">รับเอกสารคำร้อง</span>
@@ -132,7 +129,6 @@
           <div id="statReqReceived" class="text-2xl font-bold text-emerald-600 mt-2">0 / 0</div>
         </div>
 
-        <!-- Stat 4 -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-500">ออกหนังสือส่งตัว</span>
@@ -141,7 +137,6 @@
           <div id="statSendDocIssued" class="text-2xl font-bold text-blue-600 mt-2">0 / 0</div>
         </div>
 
-        <!-- Stat 5 -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-500">สถานะการนิเทศ</span>
@@ -154,24 +149,25 @@
           </div>
         </div>
       </div>
-      <!-- SECTION สรุปข้อมูลพื้นที่การฝึกงาน (เพิ่มใหม่) -->
-<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mt-4">
-  <div class="flex items-center justify-between mb-3 border-b pb-2">
-    <div class="flex items-center space-x-2">
-      <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm">
-        <i class="fa-solid fa-map-location-dot"></i>
-      </div>
-      <h3 class="font-bold text-slate-800 text-sm">สรุปพื้นที่สถานประกอบการ (โซนนิ่งการฝึกงาน)</h3>
-    </div>
-    <span class="text-xs text-slate-400">* แสดงจำนวนนักศึกษาจำแนกตามจังหวัดและเขต/อำเภอ</span>
-  </div>
-  
-  <div id="locationStatsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-64 overflow-y-auto pr-1">
-    <div class="text-xs text-slate-400">กำลังโหลดข้อมูลพื้นที่...</div>
-  </div>
-</div>
 
-     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border">
+      <!-- SECTION สรุปข้อมูลพื้นที่การฝึกงาน -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mt-4">
+        <div class="flex items-center justify-between mb-3 border-b pb-2">
+          <div class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <h3 class="font-bold text-slate-800 text-sm">สรุปพื้นที่สถานประกอบการ (โซนนิ่งการฝึกงาน)</h3>
+          </div>
+          <span class="text-xs text-slate-400">* แสดงจำนวนนักศึกษาจำแนกตามจังหวัดและเขต/อำเภอ</span>
+        </div>
+        
+        <div id="locationStatsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-64 overflow-y-auto pr-1">
+          <div class="text-xs text-slate-400">กำลังโหลดข้อมูลพื้นที่...</div>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border">
         <div>
           <h2 id="dashboardHeading" class="text-xl font-bold text-slate-800">แผงควบคุมสำหรับครู / อาจารย์นิเทศ</h2>
           <p class="text-xs text-slate-500">จัดการสถานะ จัดโซนนิ่ง และบันทึกผลการนิเทศนักศึกษา</p>
@@ -446,6 +442,9 @@
   </div>
 
   <script>
+    // 🔗 URL ปลายทางของ Google Apps Script Web App
+    const API_URL = "https://script.google.com/macros/s/AKfycby3Z5I3R6NiY0WYE3-nQMObINo48qSVIUO1GgOpEbssl6KQFR6GrB7mh9Mbq86FKybp/exec";
+
     const LOCATION_DATA = {
       "กรุงเทพมหานคร": {
         "เขตพระนคร": ["พระบรมมหาราชวัง", "วังบูรพาภิรมย์", "วัดราชบพิธ", "สำราญราษฎร์", "ศาลเจ้าพ่อเสือ", "เสาชิงช้า", "บวรนิเวศ", "ตลาดยอด", "ชนะสงคราม", "บ้านพานถม", "บางขุนพรหม", "วัดสามพระยา"],
@@ -559,44 +558,33 @@
       }
     };
 
-    // ============================================================
-    // GITHUB PAGES / EXTERNAL HOST CONFIGURATION
-    // ตั้งค่า URL ของ Google Apps Script Web App ที่ deploy แล้ว
-    // ============================================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycby3Z5I3R6NiY0WYE3-nQMObINo48qSVIUO1GgOpEbssl6KQFR6GrB7mh9Mbq86FKybp/exec';
-
-    async function apiCall(action, payload = {}) {
-      if (!API_URL || API_URL.includes('PASTE_YOUR')) {
-        throw new Error('ยังไม่ได้ตั้งค่า API_URL ใน index.html');
-      }
-
-      const requestPayload = Object.assign({}, payload);
-      if (action !== 'login' && currentUser && currentUser.token) requestPayload.token = currentUser.token;
-      const body = JSON.stringify({ action, payload: requestPayload });
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body
-      });
-
-      const text = await response.text();
-      let result;
-      try { result = JSON.parse(text); }
-      catch (e) { throw new Error('API ส่งข้อมูลกลับมาไม่ใช่ JSON: ' + text.slice(0, 200)); }
-
-      if (!result.success && result.error) throw new Error(result.error);
-      return result.data !== undefined ? result.data : result;
-    }
-
-    function apiCallSafe(action, payload, onSuccess, onFailure) {
-      apiCall(action, payload).then(onSuccess).catch(onFailure || (err => showToast(err.message, false)));
-    }
-
     let currentUser = null;
     let allStudentData = [];
     let activeFormData = null;
     let isEditingProfile = false;
+
+    // 🌐 ฟังก์ชันหลักสำหรับส่ง HTTP Request ไปยัง Google Apps Script Backend
+    async function callApi(action, payload = {}) {
+      try {
+        const token = sessionStorage.getItem("sessionToken") || "";
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify({
+            action: action,
+            payload: { ...payload, token: token }
+          })
+        });
+
+        const res = await response.json();
+        return res;
+      } catch (err) {
+        console.error("API Call Error:", err);
+        return { success: false, message: "ไม่สามารถเชื่อมต่อเครื่องแม่ข่ายได้: " + err.message };
+      }
+    }
 
     window.onload = function() {
       const provSelect = document.getElementById('province');
@@ -647,37 +635,46 @@
       }
     }
 
-    function handleLogin(e) {
+    async function handleLogin(e) {
       e.preventDefault();
       const role = document.getElementById('loginRole').value;
       const user = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
 
-      apiCallSafe('login', { username: user, password: pass, role }, res => {
-        if (res.success) {
-          currentUser = res;
-          document.getElementById('loginSection').classList.add('hidden');
-          document.getElementById('userInfo').classList.remove('hidden');
-          let roleLabel = 'ครู';
-          if (res.role === 'student') roleLabel = 'นักศึกษา';
-          if (res.role === 'admin') roleLabel = 'ผู้ดูแลระบบ';
-          document.getElementById('userBadge').innerText = `${res.name} (${roleLabel})`;
-          if (res.role === 'student') loadStudentDashboard(res.studentId);
-          else loadTeacherDashboard();
-          showToast('เข้าสู่ระบบเรียบร้อยแล้ว', true);
+      showToast("กำลังเข้าสู่ระบบ...", true);
+
+      const res = await callApi("login", { username: user, password: pass, role: role });
+      const data = res.data || res;
+
+      if (res.success && data.token) {
+        currentUser = data;
+        sessionStorage.setItem("sessionToken", data.token);
+
+        document.getElementById('loginSection').classList.add('hidden');
+        document.getElementById('userInfo').classList.remove('hidden');
+        
+        let roleLabel = 'ครู';
+        if (data.role === 'student') roleLabel = 'นักศึกษา';
+        if (data.role === 'admin') roleLabel = 'ผู้ดูแลระบบ';
+        
+        document.getElementById('userBadge').innerText = `${data.name} (${roleLabel})`;
+
+        if (data.role === 'student') {
+          loadStudentDashboard(data.studentId);
         } else {
-          showToast(res.message, false);
+          loadTeacherDashboard();
         }
-      });
+        showToast("เข้าสู่ระบบเรียบร้อยแล้ว", true);
+      } else {
+        showToast(res.error || data.message || "เข้าสู่ระบบไม่สำเร็จ", false);
+      }
     }
 
     function logout() {
-      if (currentUser && currentUser.token) {
-        apiCall('logout', {}).catch(() => {});
-      }
       currentUser = null;
       allStudentData = [];
       activeFormData = null;
+      sessionStorage.removeItem("sessionToken");
 
       document.getElementById('username').value = '';
       document.getElementById('password').value = '';
@@ -691,74 +688,76 @@
     }
 
     // ---------- STUDENT LOGIC ----------
-    function loadStudentDashboard(studentId) {
-      apiCallSafe('getStudentData', { studentId }, st => {
-          if (!st) {
-            showToast("ไม่พบข้อมูลนักศึกษาในระบบ", false);
-            return;
-          }
-          activeFormData = st;
-          document.getElementById('studentDashboard').classList.remove('hidden');
-          
-          const alertBox = document.getElementById('statusAlert');
-          const btnForm = document.getElementById('btnOpenForm');
-          alertBox.classList.remove('hidden');
+    async function loadStudentDashboard(studentId) {
+      const res = await callApi("getStudentData", { studentId: studentId });
+      const st = res.data || res;
 
-          if (st.status === 'Inactive') {
-            alertBox.className = "p-4 rounded-xl bg-red-100 text-red-800 border border-red-200";
-            alertBox.innerHTML = `<div><i class="fa-solid fa-lock mr-2"></i><b>สถานะ Inactive:</b> สิทธิ์ของคุณถูกระงับ ไม่สามารถแก้ไขข้อมูลคำร้องได้</div>`;
-            
-            btnForm.disabled = true;
-            btnForm.onclick = null;
-            btnForm.className = "w-full bg-slate-100 text-slate-400 font-semibold py-2 rounded-lg text-sm cursor-not-allowed border border-slate-200";
-          } else {
-            alertBox.className = "p-4 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-200";
-            alertBox.innerHTML = `<div><i class="fa-solid fa-circle-check mr-2"></i><b>สถานะ Active:</b> คุณสามารถเข้าใช้งานและแก้ไขคำร้องได้ปกติ</div>`;
-            
-            btnForm.disabled = false;
-            btnForm.onclick = openFormModal;
-            btnForm.className = "w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-lg text-sm transition";
-          }
+      if (!res.success && !st.studentId) {
+        showToast("ไม่พบข้อมูลนักศึกษาในระบบ", false);
+        return;
+      }
 
-          document.getElementById('stIdView').innerText = st.studentId;
-          document.getElementById('stNameView').innerText = st.prefix + st.fullname;
-          document.getElementById('stLevelView').innerText = st.level;
-          document.getElementById('stDeptView').innerText = st.department;
-          document.getElementById('stNoView').innerText = st.studentNo || '-';
-          document.getElementById('stShiftView').innerText = st.shift || '-';
-          document.getElementById('stPhoneView').innerText = st.phone || '-';
-          document.getElementById('stEmailView').innerText = st.email || '-';
-          document.getElementById('stAdvisorView').innerText = st.advisor || '-';
+      activeFormData = st;
+      document.getElementById('studentDashboard').classList.remove('hidden');
+      
+      const alertBox = document.getElementById('statusAlert');
+      const btnForm = document.getElementById('btnOpenForm');
+      alertBox.classList.remove('hidden');
 
-          document.getElementById('editPrefix').value = st.prefix;
-          document.getElementById('editFullname').value = st.fullname;
-          document.getElementById('editLevel').value = st.level;
-          document.getElementById('editDept').value = st.department;
-          document.getElementById('editNo').value = st.studentNo;
-          document.getElementById('editShift').value = st.shift;
-          document.getElementById('editPhone').value = st.phone;
-          document.getElementById('editEmail').value = st.email;
-          document.getElementById('editAdvisor').value = st.advisor;
+      if (st.status === 'Inactive') {
+        alertBox.className = "p-4 rounded-xl bg-red-100 text-red-800 border border-red-200";
+        alertBox.innerHTML = `<div><i class="fa-solid fa-lock mr-2"></i><b>สถานะ Inactive:</b> สิทธิ์ของคุณถูกระงับ ไม่สามารถแก้ไขข้อมูลคำร้องได้</div>`;
+        
+        btnForm.disabled = true;
+        btnForm.onclick = null;
+        btnForm.className = "w-full bg-slate-100 text-slate-400 font-semibold py-2 rounded-lg text-sm cursor-not-allowed border border-slate-200";
+      } else {
+        alertBox.className = "p-4 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-200";
+        alertBox.innerHTML = `<div><i class="fa-solid fa-circle-check mr-2"></i><b>สถานะ Active:</b> คุณสามารถเข้าใช้งานและแก้ไขคำร้องได้ปกติ</div>`;
+        
+        btnForm.disabled = false;
+        btnForm.onclick = openFormModal;
+        btnForm.className = "w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-lg text-sm transition";
+      }
 
-          document.getElementById('startDate').value = st.startDate;
-          document.getElementById('endDate').value = st.endDate;
-          document.getElementById('companyName').value = st.companyName;
-          document.getElementById('toPerson').value = st.toPerson;
-          document.getElementById('address').value = st.address;
-          document.getElementById('companyPhone').value = st.companyPhone;
-          document.getElementById('zipcode').value = st.zipcode;
-          document.getElementById('coordinatorName').value = st.coordinatorName;
-          document.getElementById('coordinatorPos').value = st.coordinatorPos;
-          document.getElementById('coordinatorPhone').value = st.coordinatorPhone;
+      document.getElementById('stIdView').innerText = st.studentId || '';
+      document.getElementById('stNameView').innerText = (st.prefix || '') + (st.fullname || '');
+      document.getElementById('stLevelView').innerText = st.level || '';
+      document.getElementById('stDeptView').innerText = st.department || '';
+      document.getElementById('stNoView').innerText = st.studentNo || '-';
+      document.getElementById('stShiftView').innerText = st.shift || '-';
+      document.getElementById('stPhoneView').innerText = st.phone || '-';
+      document.getElementById('stEmailView').innerText = st.email || '-';
+      document.getElementById('stAdvisorView').innerText = st.advisor || '-';
 
-          if (st.province) {
-            document.getElementById('province').value = st.province;
-            onProvinceChange();
-            document.getElementById('district').value = st.district;
-            onDistrictChange();
-            document.getElementById('subdistrict').value = st.subdistrict;
-          }
-        });
+      document.getElementById('editPrefix').value = st.prefix || '';
+      document.getElementById('editFullname').value = st.fullname || '';
+      document.getElementById('editLevel').value = st.level || '';
+      document.getElementById('editDept').value = st.department || '';
+      document.getElementById('editNo').value = st.studentNo || '';
+      document.getElementById('editShift').value = st.shift || '';
+      document.getElementById('editPhone').value = st.phone || '';
+      document.getElementById('editEmail').value = st.email || '';
+      document.getElementById('editAdvisor').value = st.advisor || '';
+
+      document.getElementById('startDate').value = st.startDate || '';
+      document.getElementById('endDate').value = st.endDate || '';
+      document.getElementById('companyName').value = st.companyName || '';
+      document.getElementById('toPerson').value = st.toPerson || '';
+      document.getElementById('address').value = st.address || '';
+      document.getElementById('companyPhone').value = st.companyPhone || '';
+      document.getElementById('zipcode').value = st.zipcode || '';
+      document.getElementById('coordinatorName').value = st.coordinatorName || '';
+      document.getElementById('coordinatorPos').value = st.coordinatorPos || '';
+      document.getElementById('coordinatorPhone').value = st.coordinatorPhone || '';
+
+      if (st.province) {
+        document.getElementById('province').value = st.province;
+        onProvinceChange();
+        document.getElementById('district').value = st.district;
+        onDistrictChange();
+        document.getElementById('subdistrict').value = st.subdistrict;
+      }
     }
 
     function toggleEditProfile() {
@@ -780,12 +779,12 @@
       }
     }
 
-    function toggleFixDate(chk) {
+    async function toggleFixDate(chk) {
       if(chk.checked) {
-        apiCallSafe('getFixDate', {}, fix => {
-            if(fix.startDate) document.getElementById('startDate').value = fix.startDate;
-            if(fix.endDate) document.getElementById('endDate').value = fix.endDate;
-          });
+        const res = await callApi("getFixDate");
+        const fix = res.data || res;
+        if(fix.startDate) document.getElementById('startDate').value = fix.startDate;
+        if(fix.endDate) document.getElementById('endDate').value = fix.endDate;
       }
     }
 
@@ -865,7 +864,7 @@
       document.getElementById('previewSection').classList.add('hidden');
     }
 
-    function submitForm() {
+    async function submitForm() {
       const payload = {
         studentId: currentUser.studentId,
         prefix: isEditingProfile ? document.getElementById('editPrefix').value : activeFormData.prefix,
@@ -893,60 +892,83 @@
         coordinatorPhone: document.getElementById('coordinatorPhone').value
       };
 
-      apiCallSafe('saveStudentForm', payload, res => {
-        showToast(res.message, true);
+      const res = await callApi("saveStudentForm", payload);
+      const data = res.data || res;
+
+      if (res.success || data.success) {
+        showToast(data.message || "บันทึกข้อมูลคำร้องเรียบร้อยแล้ว", true);
         closeModal('formModal');
         editForm();
         loadStudentDashboard(currentUser.studentId);
-      });
+      } else {
+        showToast("บันทึกไม่สำเร็จ: " + (res.error || data.message), false);
+      }
     }
 
-    function downloadDoc(type) {
+    async function downloadDoc(type) {
       const docId = type === 'req' ? "1J0AP1yh1VrahHDhl14B1IXloupND_Ft2QxJ5OFBzmYA" : "1-Vl5iUrRP7oWbboLb4bX3YdmsU-_kIg5Cj1Cb79vUE0";
       const docName = type === 'req' ? 'ใบคำร้อง' : 'หนังสือส่งตัว';
 
       showToast("กำลังสร้างเอกสาร PDF กรุณารอสักครู่...", true);
 
-      apiCallSafe('generatePDF', { studentId: currentUser.studentId, templateDocId: docId, docType: docName }, res => {
-          const link = document.createElement('a');
-          link.href = "data:application/pdf;base64," + res.base64;
-          link.download = res.filename;
-          link.click();
-        showToast("ดาวน์โหลดเอกสารสำเร็จ", true);
+      const res = await callApi("generatePDF", {
+        studentId: currentUser.studentId,
+        templateDocId: docId,
+        docType: docName
       });
+      const data = res.data || res;
+
+      if (res.success && data.base64) {
+        const link = document.createElement('a');
+        link.href = "data:application/pdf;base64," + data.base64;
+        link.download = data.filename;
+        link.click();
+        showToast("ดาวน์โหลดเอกสารสำเร็จ", true);
+      } else {
+        showToast("เกิดข้อผิดพลาด: " + (res.error || data.message), false);
+      }
     }
 
-    function downloadDocByTeacher(studentId, type) {
+    async function downloadDocByTeacher(studentId, type) {
       const docId = type === 'req' ? "1J0AP1yh1VrahHDhl14B1IXloupND_Ft2QxJ5OFBzmYA" : "1-Vl5iUrRP7oWbboLb4bX3YdmsU-_kIg5Cj1Cb79vUE0";
       const docName = type === 'req' ? 'ใบคำร้อง' : 'หนังสือส่งตัว';
 
       showToast("กำลังสร้างเอกสาร PDF กรุณารอสักครู่...", true);
 
-      apiCallSafe('generatePDF', { studentId, templateDocId: docId, docType: docName }, res => {
-          const link = document.createElement('a');
-          link.href = "data:application/pdf;base64," + res.base64;
-          link.download = res.filename;
-          link.click();
-        showToast("ดาวน์โหลดเอกสารสำเร็จ", true);
+      const res = await callApi("generatePDF", {
+        studentId: studentId,
+        templateDocId: docId,
+        docType: docName
       });
+      const data = res.data || res;
+
+      if (res.success && data.base64) {
+        const link = document.createElement('a');
+        link.href = "data:application/pdf;base64," + data.base64;
+        link.download = data.filename;
+        link.click();
+        showToast("ดาวน์โหลดเอกสารสำเร็จ", true);
+      } else {
+        showToast("เกิดข้อผิดพลาด: " + (res.error || data.message), false);
+      }
     }
 
     // ---------- TEACHER & ADMIN LOGIC ----------
-    function loadTeacherDashboard() {
+    async function loadTeacherDashboard() {
       document.getElementById('teacherDashboard').classList.remove('hidden');
       
-      // อัปเดตหัวข้อและป้าย Dashboard ตามสิทธิ์
       const isAdmin = currentUser && currentUser.role === 'admin';
       document.getElementById('lblStatTotalTitle').innerText = isAdmin ? 'จำนวนนักศึกษาทั้งหมด' : 'จำนวนนักศึกษาที่ดูแล';
       document.getElementById('dashboardHeading').innerText = isAdmin ? 'แผงควบคุมระบบ (Admin Dashboard)' : 'แผงควบคุมสำหรับครู / อาจารย์นิเทศ';
 
-      // ดึงสถิติ Dashboard
       loadDashboardStats();
 
-      // ดึงข้อมูลตารางนักศึกษาจาก API
-      apiCallSafe('getAllStudents', {}, data => {
-        allStudentData = data || [];
+      const res = await callApi("getAllStudents", { user: currentUser });
+      const data = res.data || res;
 
+      if (res.success || Array.isArray(data)) {
+        allStudentData = Array.isArray(data) ? data : (data.students || []);
+        
         const levelSelect = document.getElementById('filterLevel');
         levelSelect.innerHTML = '';
 
@@ -958,72 +980,78 @@
           levelSelect.disabled = false;
           levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
           const levels = [...new Set(allStudentData.map(x => x.level).filter(x => x && x !== '-'))];
-          levels.forEach(lvl => levelSelect.add(new Option(lvl, lvl)));
+          levels.forEach(lvl => {
+            levelSelect.add(new Option(lvl, lvl));
+          });
         }
 
         filterStudents();
-      });
+      } else {
+        showToast("โหลดข้อมูลล้มเหลว: " + (res.error || data.message), false);
+      }
     }
 
-function loadDashboardStats() {
-  apiCallSafe('getDashboardStats', {}, stats => {
-    if (!stats) return;
-    const total = stats.totalStudents || 0;
+    async function loadDashboardStats() {
+      const res = await callApi("getDashboardStats", { user: currentUser });
+      const stats = res.data || res;
 
-    document.getElementById('statTotalStudents').innerText = total;
-    document.getElementById('statHasReqInfo').innerText = `${stats.hasReqInfoCount} / ${total}`;
-    document.getElementById('statReqReceived').innerText = `${stats.reqReceivedCount} / ${total}`;
-    document.getElementById('statSendDocIssued').innerText = `${stats.sendDocIssuedCount} / ${total}`;
-    document.getElementById('supR1').innerText = stats.supRound1Count;
-    document.getElementById('supR2').innerText = stats.supRound2Count;
-    document.getElementById('supR3').innerText = stats.supRound3Count;
-    document.querySelectorAll('.lblTotalSt').forEach(el => el.innerText = total);
-    renderLocationStats(stats.locationStats);
-  });
-}
+      if (!stats) return;
+      const total = stats.totalStudents || 0;
 
-function renderLocationStats(locStats) {
-  const container = document.getElementById('locationStatsContainer');
-  container.innerHTML = '';
+      document.getElementById('statTotalStudents').innerText = total;
+      document.getElementById('statHasReqInfo').innerText = `${stats.hasReqInfoCount || 0} / ${total}`;
+      document.getElementById('statReqReceived').innerText = `${stats.reqReceivedCount || 0} / ${total}`;
+      document.getElementById('statSendDocIssued').innerText = `${stats.sendDocIssuedCount || 0} / ${total}`;
 
-  if (!locStats || Object.keys(locStats).length === 0) {
-    container.innerHTML = '<p class="text-xs text-slate-400 col-span-full">ยังไม่มีข้อมูลสถานประกอบการในระบบ</p>';
-    return;
-  }
+      document.getElementById('supR1').innerText = stats.supRound1Count || 0;
+      document.getElementById('supR2').innerText = stats.supRound2Count || 0;
+      document.getElementById('supR3').innerText = stats.supRound3Count || 0;
 
-  // เรียงลำดับจังหวัดที่มีนักศึกษาฝึกงานมากที่สุดขึ้นก่อน
-  const sortedProvinces = Object.keys(locStats).sort((a, b) => locStats[b].total - locStats[a].total);
+      document.querySelectorAll('.lblTotalSt').forEach(el => el.innerText = total);
 
-  sortedProvinces.forEach(prov => {
-    const pData = locStats[prov];
-    
-    // สร้างแท็กรายการเขต/อำเภอ
-    let districtsHtml = '';
-    Object.keys(pData.districts).forEach(dist => {
-      districtsHtml += `
-        <div class="flex justify-between items-center text-xs text-slate-600 border-b border-slate-100 py-1 last:border-0">
-          <span class="truncate pr-2">• ${dist}</span>
-          <span class="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full text-[11px]">${pData.districts[dist]} คน</span>
-        </div>
-      `;
-    });
+      renderLocationStats(stats.locationStats);
+    }
 
-    const card = document.createElement('div');
-    card.className = "bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-between";
-    card.innerHTML = `
-      <div>
-        <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-slate-200">
-          <span class="font-bold text-xs text-slate-800 truncate"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i>${prov}</span>
-          <span class="bg-indigo-600 text-white font-bold text-xs px-2 py-0.5 rounded-lg shadow-sm">${pData.total} คน</span>
-        </div>
-        <div class="space-y-0.5">
-          ${districtsHtml}
-        </div>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
+    function renderLocationStats(locStats) {
+      const container = document.getElementById('locationStatsContainer');
+      container.innerHTML = '';
+
+      if (!locStats || Object.keys(locStats).length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 col-span-full">ยังไม่มีข้อมูลสถานประกอบการในระบบ</p>';
+        return;
+      }
+
+      const sortedProvinces = Object.keys(locStats).sort((a, b) => locStats[b].total - locStats[a].total);
+
+      sortedProvinces.forEach(prov => {
+        const pData = locStats[prov];
+        
+        let districtsHtml = '';
+        Object.keys(pData.districts).forEach(dist => {
+          districtsHtml += `
+            <div class="flex justify-between items-center text-xs text-slate-600 border-b border-slate-100 py-1 last:border-0">
+              <span class="truncate pr-2">• ${dist}</span>
+              <span class="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full text-[11px]">${pData.districts[dist]} คน</span>
+            </div>
+          `;
+        });
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-slate-200">
+              <span class="font-bold text-xs text-slate-800 truncate"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i>${prov}</span>
+              <span class="bg-indigo-600 text-white font-bold text-xs px-2 py-0.5 rounded-lg shadow-sm">${pData.total} คน</span>
+            </div>
+            <div class="space-y-0.5">
+              ${districtsHtml}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
     function renderTeacherTable(data) {
       const tbody = document.getElementById('teacherStudentTable');
@@ -1097,22 +1125,27 @@ function renderLocationStats(locStats) {
       });
     }
 
-    // ฟังก์ชันส่งค่า Checkbox อัปเดต Real-time
-    function onDocStatusChange(studentId, field, isChecked) {
-      apiCallSafe('updateDocStatus', { studentId, field, value: isChecked }, res => {
-        if (res.success) {
-          const label = field === 'reqReceived' ? 'รับคำร้อง' : 'ออกหนังสือส่งตัว';
-          showToast(`อัปเดตสถานะ "${label}" เรียบร้อยแล้ว`, true);
-          const item = allStudentData.find(x => x.studentId === studentId);
-          if (item) {
-            if (field === 'reqReceived') item.isReqReceived = isChecked;
-            if (field === 'sendDocIssued') item.isSendDocIssued = isChecked;
-          }
-          loadDashboardStats();
-        } else {
-          showToast(res.message || 'เกิดข้อผิดพลาดในการบันทึก', false);
-        }
+    async function onDocStatusChange(studentId, field, isChecked) {
+      const res = await callApi("updateDocStatus", {
+        studentId: studentId,
+        field: field,
+        value: isChecked
       });
+      const data = res.data || res;
+
+      if (res.success || data.success) {
+        const label = field === 'reqReceived' ? 'รับคำร้อง' : 'ออกหนังสือส่งตัว';
+        showToast(`อัปเดตสถานะ "${label}" เรียบร้อยแล้ว`, true);
+        
+        const item = allStudentData.find(x => x.studentId === studentId);
+        if (item) {
+          if (field === 'reqReceived') item.isReqReceived = isChecked;
+          if (field === 'sendDocIssued') item.isSendDocIssued = isChecked;
+        }
+        loadDashboardStats();
+      } else {
+        showToast(res.error || data.message || "เกิดข้อผิดพลาดในการบันทึก", false);
+      }
     }
 
     function onFilterProvinceChange() {
@@ -1143,16 +1176,18 @@ function renderLocationStats(locStats) {
       renderTeacherTable(filtered);
     }
 
-    function toggleStatus(studentId, currentStatus) {
+    async function toggleStatus(studentId, currentStatus) {
       const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-      apiCallSafe('updateStatus', { studentId, newStatus }, res => {
-        if (res.success) {
-          showToast(`เปลี่ยนสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
-          loadTeacherDashboard();
-        } else {
-          showToast(res.message || 'เกิดข้อผิดพลาดในการเปลี่ยนสถานะ', false);
-        }
-      });
+      
+      const res = await callApi("updateStatus", { studentId: studentId, status: newStatus });
+      const data = res.data || res;
+
+      if (res.success || data.success) {
+        showToast(`เปลี่ยนสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
+        loadTeacherDashboard();
+      } else {
+        showToast(res.error || data.message || "เกิดข้อผิดพลาดในการเปลี่ยนสถานะ", false);
+      }
     }
 
     function togglePhotoUpload(chk) {
@@ -1166,7 +1201,7 @@ function renderLocationStats(locStats) {
       }
     }
 
-    function openSupervision(studentId, targetRound = null) {
+    async function openSupervision(studentId, targetRound = null) {
       document.getElementById('supStudentId').value = studentId;
       document.getElementById('chkAttachPhoto').checked = false;
       togglePhotoUpload({ checked: false });
@@ -1178,33 +1213,34 @@ function renderLocationStats(locStats) {
       
       openModal('supervisionModal');
       
-      apiCallSafe('getSupervisionHistory', { studentId }, history => {
-          const box = document.getElementById('supHistory');
-          box.innerHTML = history && history.length ? '' : '<p class="text-slate-400">ยังไม่มีประวัติการนิเทศ</p>';
-          
-          if(history) {
-            history.forEach(h => {
-              const imgHtml = h.imageUrl 
-                ? `<a href="${h.imageUrl}" target="_blank" title="คลิกเพื่อดูรูปขนาดเต็ม" class="block shrink-0">
-                     <img src="${h.imageUrl}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 shadow-sm hover:scale-105 transition transform" alt="รูปภาพนิเทศ">
-                   </a>`
-                : '';
+      const res = await callApi("getSupervisionHistory", { studentId: studentId });
+      const history = res.data || res;
+      const box = document.getElementById('supHistory');
 
-              box.innerHTML += `
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-start gap-3">
-                  <div class="flex-1">
-                    <div class="font-bold text-slate-800">
-                      ครั้งที่ ${h.round} <span class="text-slate-400 font-normal">(${h.date})</span> 
-                      - <span class="text-indigo-600 font-semibold">${h.channel}</span>
-                    </div>
-                    <p class="text-slate-600 mt-1 leading-relaxed">${h.note}</p>
-                  </div>
-                  ${imgHtml}
+      box.innerHTML = (Array.isArray(history) && history.length) ? '' : '<p class="text-slate-400">ยังไม่มีประวัติการนิเทศ</p>';
+      
+      if (Array.isArray(history)) {
+        history.forEach(h => {
+          const imgHtml = h.imageUrl 
+            ? `<a href="${h.imageUrl}" target="_blank" title="คลิกเพื่อดูรูปขนาดเต็ม" class="block shrink-0">
+                 <img src="${h.imageUrl}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 shadow-sm hover:scale-105 transition transform" alt="รูปภาพนิเทศ">
+               </a>`
+            : '';
+
+          box.innerHTML += `
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-start gap-3">
+              <div class="flex-1">
+                <div class="font-bold text-slate-800">
+                  ครั้งที่ ${h.round} <span class="text-slate-400 font-normal">(${h.date})</span> 
+                  - <span class="text-indigo-600 font-semibold">${h.channel}</span>
                 </div>
-              `;
-            });
-          }
+                <p class="text-slate-600 mt-1 leading-relaxed">${h.note}</p>
+              </div>
+              ${imgHtml}
+            </div>
+          `;
         });
+      }
     }
 
     function saveSupervisionRecord(e) {
@@ -1220,23 +1256,29 @@ function renderLocationStats(locStats) {
         date: document.getElementById('supDate').value,
         channel: document.getElementById('supChannel').value,
         note: document.getElementById('supNote').value,
-        teacherId: currentUser.teacherId,
+        teacherId: currentUser ? currentUser.teacherId : '',
         fileData: null,
         fileName: null,
         mimeType: null
       };
 
-      const processAndSave = () => {
+      const processAndSave = async () => {
         btn.disabled = true;
         btn.innerText = "กำลังบันทึกข้อมูล...";
         
-        apiCallSafe('saveSupervision', payload, res => {
-            btn.disabled = false;
-            btn.innerText = "บันทึกการนิเทศ";
-            showToast(res.message, true);
-            closeModal('supervisionModal');
-            loadTeacherDashboard();
-          });
+        const res = await callApi("saveSupervision", payload);
+        const data = res.data || res;
+
+        btn.disabled = false;
+        btn.innerText = "บันทึกการนิเทศ";
+
+        if (res.success || data.success) {
+          showToast(data.message || "บันทึกผลการนิเทศเรียบร้อย", true);
+          closeModal('supervisionModal');
+          loadTeacherDashboard();
+        } else {
+          showToast(res.error || data.message || "เกิดข้อผิดพลาดในการบันทึก", false);
+        }
       };
 
       if (chkPhoto && fileInput.files.length > 0) {
