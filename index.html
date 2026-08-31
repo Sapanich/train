@@ -2,18 +2,28 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ระบบจัดการข้อมูลการฝึกงานนักศึกษา</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
     * { font-family: 'Sarabun', sans-serif; }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen relative">
+<body class="bg-slate-50 text-slate-800 min-h-screen relative pb-10">
 
-  <!-- CUSTOM ALERT TOAST -->
-  <div id="toastNotification" class="hidden fixed top-5 right-5 z-50 max-w-sm w-full bg-white rounded-2xl shadow-2xl border p-4 transition-all transform duration-300">
+  <div id="toastNotification" class="hidden fixed top-5 right-5 z-50 max-w-xs sm:max-w-sm w-full bg-white rounded-2xl shadow-2xl border p-4 transition-all transform duration-300">
     <div class="flex items-center space-x-3">
       <div id="toastIcon" class="text-2xl text-emerald-500">
         <i class="fa-solid fa-circle-check"></i>
@@ -22,127 +32,128 @@
         <h4 id="toastTitle" class="font-bold text-sm text-slate-800">แจ้งเตือนระบบ</h4>
         <p id="toastMessage" class="text-xs text-slate-500 mt-0.5"></p>
       </div>
-      <button onclick="hideToast()" class="text-slate-400 hover:text-slate-600">
+      <button onclick="hideToast()" class="text-slate-400 hover:text-slate-600 p-1">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
   </div>
 
-  <!-- TOP NAV BAR -->
   <nav class="bg-indigo-700 text-white shadow-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-graduation-cap text-2xl text-yellow-300"></i>
-        <span class="font-bold text-lg md:text-xl">ระบบจัดการข้อมูลการฝึกงานนักศึกษา -SAHAPANICH-</span>
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <i class="fa-solid fa-graduation-cap text-xl sm:text-2xl text-yellow-300"></i>
+        <span class="font-bold text-sm sm:text-base md:text-xl truncate max-w-[200px] sm:max-w-none">
+          ระบบฝึกงานนักศึกษา <span class="hidden sm:inline">-SAHAPANICH-</span>
+        </span>
       </div>
-      <div id="userInfo" class="hidden flex items-center space-x-4">
-        <span id="userBadge" class="text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
-        <button onclick="logout()" class="text-xs md:text-sm bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-lg transition shadow-sm">
-          <i class="fa-solid fa-right-from-bracket mr-1"></i> ออกจากระบบ
+
+      <div id="userInfo" class="hidden flex items-center space-x-2 sm:space-x-4">
+        <span id="userBadge" class="hidden md:inline-block text-xs md:text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
+        <button onclick="logout()" class="text-xs md:text-sm bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-lg transition shadow-sm flex items-center">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> <span class="hidden sm:inline">ออกจากระบบ</span>
         </button>
       </div>
     </div>
   </nav>
 
-  <!-- CONTAINER -->
-  <div class="max-w-7xl mx-auto px-4 py-6">
+  <div class="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
 
-    <!-- LOGIN SECTION -->
-    <div id="loginSection" class="max-w-md mx-auto mt-12 bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
+    <div id="loginSection" class="max-w-md mx-auto mt-6 sm:mt-12 bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-slate-100">
       <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-indigo-900">เข้าสู่ระบบ</h2>
-        <p class="text-sm text-slate-500 mt-1">กรุณาเลือกประเภทผู้ใช้งาน</p>
+        <h2 class="text-xl sm:text-2xl font-bold text-indigo-900">เข้าสู่ระบบ</h2>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">กรุณาเลือกประเภทผู้ใช้งาน</p>
       </div>
       
       <div class="flex border-b mb-6">
-        <button id="tabStudent" type="button" onclick="switchLoginTab('student')" class="w-1/2 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600">นักศึกษา</button>
-        <button id="tabTeacher" type="button" onclick="switchLoginTab('teacher')" class="w-1/2 py-2 font-semibold text-slate-400 border-b-2 border-transparent">ครู / เจ้าหน้าที่</button>
+        <button id="tabStudent" type="button" onclick="switchLoginTab('student')" class="w-1/2 py-2 text-sm sm:text-base font-semibold text-indigo-600 border-b-2 border-indigo-600">นักศึกษา</button>
+        <button id="tabTeacher" type="button" onclick="switchLoginTab('teacher')" class="w-1/2 py-2 text-sm sm:text-base font-semibold text-slate-400 border-b-2 border-transparent">ครู / เจ้าหน้าที่</button>
       </div>
 
       <form onsubmit="handleLogin(event)" class="space-y-4">
         <input type="hidden" id="loginRole" value="student">
         <div>
-          <label id="userLabel" class="block text-sm font-medium mb-1">รหัสนักศึกษา</label>
-          <input type="text" id="username" required class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+          <label id="userLabel" class="block text-xs sm:text-sm font-medium mb-1">รหัสนักศึกษา</label>
+          <input type="text" id="username" required class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
         </div>
         <div id="passwordGroup" class="hidden">
-          <label class="block text-sm font-medium mb-1">รหัสผ่าน</label>
-          <input type="password" id="password" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+          <label class="block text-xs sm:text-sm font-medium mb-1">รหัสผ่าน</label>
+          <input type="password" id="password" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
         </div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition text-sm sm:text-base">
           เข้าสู่ระบบ
         </button>
       </form>
     </div>
 
-    <!-- STUDENT DASHBOARD -->
-    <div id="studentDashboard" class="hidden space-y-6">
-      <div id="statusAlert" class="hidden p-4 rounded-xl flex items-center justify-between"></div>
+    <div id="studentDashboard" class="hidden space-y-4 sm:space-y-6">
+      <div id="statusAlert" class="hidden p-4 rounded-xl flex items-center justify-between text-xs sm:text-sm"></div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div class="text-indigo-600 text-3xl mb-3"><i class="fa-solid fa-file-pen"></i></div>
-          <h3 class="font-bold text-lg mb-1">ข้อมูลคำร้อง</h3>
-          <p class="text-xs text-slate-500 mb-4">กรอกและแก้ไขข้อมูลหนังสือถึงสถานประกอบการ</p>
-          <button onclick="openFormModal()" id="btnOpenForm" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-lg text-sm">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+          <div>
+            <div class="text-indigo-600 text-3xl mb-3"><i class="fa-solid fa-file-pen"></i></div>
+            <h3 class="font-bold text-base sm:text-lg mb-1">ข้อมูลคำร้อง</h3>
+            <p class="text-xs text-slate-500 mb-4">กรอกและแก้ไขข้อมูลหนังสือถึงสถานประกอบการ</p>
+          </div>
+          <button onclick="openFormModal()" id="btnOpenForm" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2.5 rounded-xl text-sm transition">
             จัดการข้อมูล
           </button>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div class="text-emerald-600 text-3xl mb-3"><i class="fa-solid fa-file-pdf"></i></div>
-          <h3 class="font-bold text-lg mb-1">ใบคำร้อง</h3>
-          <p class="text-xs text-slate-500 mb-4">ดาวน์โหลดเอกสารใบคำร้องขอฝึกงาน (PDF)</p>
-          <button onclick="downloadDoc('req')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold py-2 rounded-lg text-sm">
+        <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+          <div>
+            <div class="text-emerald-600 text-3xl mb-3"><i class="fa-solid fa-file-pdf"></i></div>
+            <h3 class="font-bold text-base sm:text-lg mb-1">ใบคำร้อง</h3>
+            <p class="text-xs text-slate-500 mb-4">ดาวน์โหลดเอกสารใบคำร้องขอฝึกงาน (PDF)</p>
+          </div>
+          <button onclick="downloadDoc('req')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold py-2.5 rounded-xl text-sm transition">
             ดาวน์โหลด PDF
           </button>
         </div>
       </div>
     </div>
 
-    <!-- TEACHER DASHBOARD -->
-    <div id="teacherDashboard" class="hidden space-y-6">
+    <div id="teacherDashboard" class="hidden space-y-4 sm:space-y-6">
       
-      <!-- DASHBOARD STATS SECTION -->
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
-            <span id="lblStatTotalTitle" class="text-xs font-bold text-slate-500">นักศึกษาทั้งหมด</span>
-            <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i class="fa-solid fa-users"></i></div>
+            <span id="lblStatTotalTitle" class="text-[11px] sm:text-xs font-bold text-slate-500">นักศึกษาทั้งหมด</span>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-users"></i></div>
           </div>
-          <div id="statTotalStudents" class="text-2xl font-bold text-slate-800 mt-2">0</div>
+          <div id="statTotalStudents" class="text-xl sm:text-2xl font-bold text-slate-800 mt-1 sm:mt-2">0</div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">กรอกข้อมูลคำร้อง</span>
-            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm"><i class="fa-solid fa-pen-to-square"></i></div>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-500">กรอกข้อมูลคำร้อง</span>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-pen-to-square"></i></div>
           </div>
-          <div id="statHasReqInfo" class="text-2xl font-bold text-amber-600 mt-2">0 / 0</div>
+          <div id="statHasReqInfo" class="text-xl sm:text-2xl font-bold text-amber-600 mt-1 sm:mt-2">0 / 0</div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">รับเอกสารคำร้อง</span>
-            <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="fa-solid fa-file-circle-check"></i></div>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-500">รับเอกสารคำร้อง</span>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-file-circle-check"></i></div>
           </div>
-          <div id="statReqReceived" class="text-2xl font-bold text-emerald-600 mt-2">0 / 0</div>
+          <div id="statReqReceived" class="text-xl sm:text-2xl font-bold text-emerald-600 mt-1 sm:mt-2">0 / 0</div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">ออกหนังสือส่งตัว</span>
-            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="fa-solid fa-paper-plane"></i></div>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-500">ออกหนังสือส่งตัว</span>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-paper-plane"></i></div>
           </div>
-          <div id="statSendDocIssued" class="text-2xl font-bold text-blue-600 mt-2">0 / 0</div>
+          <div id="statSendDocIssued" class="text-xl sm:text-2xl font-bold text-blue-600 mt-1 sm:mt-2">0 / 0</div>
         </div>
 
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl shadow-sm border border-slate-200 col-span-2 sm:col-span-1">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">สถานะการนิเทศ</span>
-            <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-user-check"></i></div>
+            <span class="text-[11px] sm:text-xs font-bold text-slate-500">สถานะการนิเทศ</span>
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-check"></i></div>
           </div>
-          <div id="statSupervision" class="text-xs font-semibold text-slate-700 mt-2 space-y-1">
+          <div id="statSupervision" class="text-xs font-semibold text-slate-700 mt-1 sm:mt-2 space-y-0.5">
             <div>ครั้งที่ 1: <b id="supR1" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
             <div>ครั้งที่ 2: <b id="supR2" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
             <div>ครั้งที่ 3: <b id="supR3" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
@@ -150,44 +161,52 @@
         </div>
       </div>
 
-      <!-- SECTION สรุปข้อมูลพื้นที่การฝึกงาน -->
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mt-4">
-        <div class="flex items-center justify-between mb-3 border-b pb-2">
+      <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 border-b pb-2 gap-1 sm:gap-0">
           <div class="flex items-center space-x-2">
             <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm">
               <i class="fa-solid fa-map-location-dot"></i>
             </div>
-            <h3 class="font-bold text-slate-800 text-sm">สรุปพื้นที่สถานประกอบการ (โซนนิ่งการฝึกงาน)</h3>
+            <h3 class="font-bold text-slate-800 text-xs sm:text-sm">สรุปพื้นที่สถานประกอบการ (โซนนิ่งการฝึกงาน)</h3>
           </div>
-          <span class="text-xs text-slate-400">* แสดงจำนวนนักศึกษาจำแนกตามจังหวัดและเขต/อำเภอ</span>
+          <span class="text-[11px] text-slate-400">* แสดงจำนวนนักศึกษาจำแนกตามจังหวัดและเขต/อำเภอ</span>
         </div>
         
-        <div id="locationStatsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-64 overflow-y-auto pr-1">
+        <div id="locationStatsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3 max-h-56 sm:max-h-64 overflow-y-auto pr-1">
           <div class="text-xs text-slate-400">กำลังโหลดข้อมูลพื้นที่...</div>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 sm:p-5 rounded-2xl shadow-sm border">
         <div>
-          <h2 id="dashboardHeading" class="text-xl font-bold text-slate-800">แผงควบคุมสำหรับครู / อาจารย์นิเทศ</h2>
+          <h2 id="dashboardHeading" class="text-lg sm:text-xl font-bold text-slate-800">แผงควบคุมสำหรับครู / อาจารย์นิเทศ</h2>
           <p class="text-xs text-slate-500">จัดการสถานะ จัดโซนนิ่ง และบันทึกผลการนิเทศนักศึกษา</p>
         </div>
-        <div class="flex flex-wrap gap-2 w-full md:w-auto">
-          <select id="filterLevel" onchange="filterStudents()" class="px-3 py-1.5 border rounded-lg text-sm bg-slate-50 font-semibold">
+        
+        <div class="flex flex-wrap gap-2 w-full md:w-auto items-center">
+          <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100 mr-auto md:mr-0">
+            <button type="button" onclick="switchViewMode('table')" id="btnViewTable" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-indigo-700 shadow-sm transition">
+              <i class="fa-solid fa-table-cells mr-1"></i> ตาราง
+            </button>
+            <button type="button" onclick="switchViewMode('cards')" id="btnViewCards" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition">
+              <i class="fa-solid fa-address-card mr-1"></i> การ์ด
+            </button>
+          </div>
+
+          <select id="filterLevel" onchange="filterStudents()" class="flex-1 md:flex-none px-3 py-1.5 border rounded-lg text-xs sm:text-sm bg-slate-50 font-semibold outline-none">
             <option value="">-- ระดับชั้นทั้งหมด --</option>
           </select>
-          <select id="filterProvince" onchange="onFilterProvinceChange()" class="px-3 py-1.5 border rounded-lg text-sm">
+          <select id="filterProvince" onchange="onFilterProvinceChange()" class="flex-1 md:flex-none px-3 py-1.5 border rounded-lg text-xs sm:text-sm outline-none">
             <option value="">-- จังหวัดทั้งหมด --</option>
           </select>
-          <select id="filterDistrict" onchange="filterStudents()" class="px-3 py-1.5 border rounded-lg text-sm">
+          <select id="filterDistrict" onchange="filterStudents()" class="flex-1 md:flex-none px-3 py-1.5 border rounded-lg text-xs sm:text-sm outline-none">
             <option value="">-- อำเภอ/เขตทั้งหมด --</option>
           </select>
         </div>
       </div>
 
-      <!-- Student Table -->
-      <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
-        <table class="w-full text-left border-collapse text-sm">
+      <div id="studentTableView" class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm min-w-[900px]">
           <thead class="bg-slate-100 text-slate-600 border-b">
             <tr>
               <th class="p-3">รหัส</th>
@@ -208,29 +227,32 @@
           <tbody id="teacherStudentTable" class="divide-y"></tbody>
         </table>
       </div>
+
+      <div id="studentCardsView" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+        </div>
+
     </div>
 
   </div>
 
-  <!-- MODAL: FORM ENTRY -->
-  <div id="formModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-      <div class="flex justify-between items-center pb-4 border-b">
-        <h3 class="text-lg font-bold text-slate-800">กรอกข้อมูลคำร้องหนังสือถึงสถานประกอบการ</h3>
-        <button onclick="closeModal('formModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+  <div id="formModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto p-4 sm:p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b sticky top-0 bg-white z-10">
+        <h3 class="text-base sm:text-lg font-bold text-slate-800">กรอกข้อมูลคำร้องหนังสือถึงสถานประกอบการ</h3>
+        <button onclick="closeModal('formModal')" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
 
       <form id="stReqForm" onsubmit="previewForm(event)" class="mt-4 space-y-4">
         
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm relative">
+        <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 shadow-sm relative">
           <div class="flex justify-between items-center mb-2 pb-2 border-b border-slate-200">
             <span class="font-bold text-xs text-indigo-900"><i class="fa-solid fa-address-card mr-1"></i> ข้อมูลพื้นฐานนักศึกษา</span>
             <button type="button" onclick="toggleEditProfile()" id="btnToggleEditProfile" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg border border-amber-300 font-semibold transition">
-              <i class="fa-solid fa-pen-to-square mr-1"></i> แก้ไขข้อมูลส่วนตัว
+              <i class="fa-solid fa-pen-to-square mr-1"></i> แก้ไขข้อมูล
             </button>
           </div>
 
-          <div id="profileViewMode" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div id="profileViewMode" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
             <div><span class="text-slate-400">รหัส:</span> <b id="stIdView" class="text-slate-800"></b></div>
             <div><span class="text-slate-400">ชื่อ:</span> <b id="stNameView" class="text-slate-800"></b></div>
             <div><span class="text-slate-400">ชั้น:</span> <b id="stLevelView" class="text-slate-800"></b></div>
@@ -238,46 +260,46 @@
             <div><span class="text-slate-400">เลขที่:</span> <b id="stNoView" class="text-slate-800"></b></div>
             <div><span class="text-slate-400">รอบ:</span> <b id="stShiftView" class="text-indigo-600 font-bold"></b></div>
             <div><span class="text-slate-400">เบอร์โทรนักศึกษา:</span> <b id="stPhoneView" class="text-slate-800"></b></div>
-            <div class="md:col-span-2"><span class="text-slate-400">อีเมล:</span> <b id="stEmailView" class="text-slate-800"></b></div>
-            <div class="md:col-span-3"><span class="text-slate-400">ที่ปรึกษา:</span> <b id="stAdvisorView" class="text-indigo-900 font-semibold"></b></div>
+            <div class="sm:col-span-2"><span class="text-slate-400">อีเมล:</span> <b id="stEmailView" class="text-slate-800"></b></div>
+            <div class="sm:col-span-2 md:col-span-3"><span class="text-slate-400">ที่ปรึกษา:</span> <b id="stAdvisorView" class="text-indigo-900 font-semibold"></b></div>
           </div>
 
-          <div id="profileEditMode" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+          <div id="profileEditMode" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs pt-1">
             <div>
               <label class="block text-slate-500 mb-1">คำนำหน้า</label>
-              <input type="text" id="editPrefix" class="w-full p-1.5 border rounded">
+              <input type="text" id="editPrefix" class="w-full p-2 border rounded-lg text-xs">
             </div>
-            <div class="md:col-span-2">
+            <div class="sm:col-span-2">
               <label class="block text-slate-500 mb-1">ชื่อ-นามสกุล</label>
-              <input type="text" id="editFullname" class="w-full p-1.5 border rounded">
+              <input type="text" id="editFullname" class="w-full p-2 border rounded-lg text-xs">
             </div>
             <div>
               <label class="block text-slate-500 mb-1">ระดับชั้น</label>
-              <input type="text" id="editLevel" class="w-full p-1.5 border rounded">
+              <input type="text" id="editLevel" class="w-full p-2 border rounded-lg text-xs">
             </div>
             <div>
               <label class="block text-slate-500 mb-1">สาขาวิชา</label>
-              <input type="text" id="editDept" class="w-full p-1.5 border rounded">
+              <input type="text" id="editDept" class="w-full p-2 border rounded-lg text-xs">
             </div>
             <div>
               <label class="block text-slate-500 mb-1">เลขที่</label>
-              <input type="text" id="editNo" class="w-full p-1.5 border rounded">
+              <input type="text" id="editNo" class="w-full p-2 border rounded-lg text-xs">
             </div>
             <div>
               <label class="block text-slate-500 mb-1">รอบ</label>
-              <input type="text" id="editShift" class="w-full p-1.5 border rounded">
+              <input type="text" id="editShift" class="w-full p-2 border rounded-lg text-xs">
             </div>
             <div>
               <label class="block text-slate-500 mb-1">เบอร์โทรศัพท์นักศึกษา</label>
-              <input type="text" id="editPhone" class="w-full p-1.5 border rounded">
+              <input type="text" id="editPhone" class="w-full p-2 border rounded-lg text-xs">
             </div>
             <div>
               <label class="block text-slate-500 mb-1">อีเมล</label>
-              <input type="text" id="editEmail" class="w-full p-1.5 border rounded">
+              <input type="text" id="editEmail" class="w-full p-2 border rounded-lg text-xs">
             </div>
-            <div class="md:col-span-3">
+            <div class="sm:col-span-2 md:col-span-3">
               <label class="block text-slate-500 mb-1">ครูที่ปรึกษา</label>
-              <input type="text" id="editAdvisor" class="w-full p-1.5 border rounded">
+              <input type="text" id="editAdvisor" class="w-full p-2 border rounded-lg text-xs">
             </div>
           </div>
         </div>
@@ -285,90 +307,90 @@
         <div class="border-t pt-4">
           <div class="flex items-center space-x-2 mb-3">
             <input type="checkbox" id="chkFixDate" onchange="toggleFixDate(this)" class="w-4 h-4 text-indigo-600 rounded">
-            <label for="chkFixDate" class="text-sm font-semibold text-indigo-900">ใช้กำหนดวันฝึกงานตามประกาศวิทยาลัย (Fixdate)</label>
+            <label for="chkFixDate" class="text-xs sm:text-sm font-semibold text-indigo-900 cursor-pointer">ใช้กำหนดวันฝึกงานตามประกาศวิทยาลัย (Fixdate)</label>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label class="block text-xs font-medium mb-1">ตั้งแต่วันที่</label>
-              <input type="date" id="startDate" required class="w-full px-3 py-2 border rounded-lg text-sm">
+              <input type="date" id="startDate" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
             </div>
             <div>
               <label class="block text-xs font-medium mb-1">ถึงวันที่</label>
-              <input type="date" id="endDate" required class="w-full px-3 py-2 border rounded-lg text-sm">
+              <input type="date" id="endDate" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="md:col-span-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div class="sm:col-span-2">
             <label class="block text-xs font-medium mb-1">ชื่อสถานประกอบการ</label>
-            <input type="text" id="companyName" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="companyName" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">เรียนถึง (ตำแหน่งผู้รับหนังสือ)</label>
-            <input type="text" id="toPerson" placeholder="เช่น ผู้จัดการฝ่ายบุคคล" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="toPerson" placeholder="เช่น ผู้จัดการฝ่ายบุคคล" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">เบอร์โทรศัพท์สถานประกอบการ</label>
-            <input type="text" id="companyPhone" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="companyPhone" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
-          <div class="md:col-span-2">
+          <div class="sm:col-span-2">
             <label class="block text-xs font-medium mb-1">ที่อยู่สถานประกอบการ (เลขที่/ซอย/ถนน)</label>
-            <input type="text" id="address" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="address" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
 
           <div>
             <label class="block text-xs font-medium mb-1">จังหวัด</label>
-            <select id="province" onchange="onProvinceChange()" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <select id="province" onchange="onProvinceChange()" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
               <option value="">-- เลือกจังหวัด --</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">เขต/อำเภอ</label>
-            <select id="district" onchange="onDistrictChange()" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <select id="district" onchange="onDistrictChange()" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
               <option value="">-- เลือกเขต/อำเภอ --</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">แขวง/ตำบล</label>
-            <select id="subdistrict" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <select id="subdistrict" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
               <option value="">-- เลือกแขวง/ตำบล --</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">รหัสไปรษณีย์</label>
-            <input type="text" id="zipcode" required class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="zipcode" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
 
           <div>
             <label class="block text-xs font-medium mb-1">ชื่อผู้ประสานงาน / ผู้ควบคุมการฝึก</label>
-            <input type="text" id="coordinatorName" class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="coordinatorName" class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">ตำแหน่งผู้ประสานงาน</label>
-            <input type="text" id="coordinatorPos" class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="coordinatorPos" class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
-          <div class="md:col-span-2">
+          <div class="sm:col-span-2">
             <label class="block text-xs font-medium mb-1">เบอร์โทรผู้ประสานงาน</label>
-            <input type="text" id="coordinatorPhone" class="w-full px-3 py-2 border rounded-lg text-sm">
+            <input type="text" id="coordinatorPhone" class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
           </div>
         </div>
 
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl transition">
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition text-sm">
           ตรวจสอบข้อมูล
         </button>
       </form>
 
       <div id="previewSection" class="hidden mt-4 space-y-4">
         <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
-          <h4 class="font-bold text-amber-900 mb-2"><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบข้อมูลก่อนยืนยัน</h4>
-          <div id="previewContent" class="text-sm space-y-1 text-amber-950"></div>
+          <h4 class="font-bold text-amber-900 mb-2 text-xs sm:text-sm"><i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบข้อมูลก่อนยืนยัน</h4>
+          <div id="previewContent" class="text-xs sm:text-sm space-y-1 text-amber-950"></div>
         </div>
         <div class="flex space-x-3">
-          <button onclick="editForm()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-xl">
+          <button onclick="editForm()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 rounded-xl text-xs sm:text-sm">
             <i class="fa-solid fa-pen-to-square"></i> แก้ไขข้อมูล
           </button>
-          <button onclick="submitForm()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl shadow-md">
+          <button onclick="submitForm()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl shadow-md text-xs sm:text-sm">
             <i class="fa-solid fa-check"></i> ยืนยันบันทึกข้อมูล
           </button>
         </div>
@@ -376,12 +398,11 @@
     </div>
   </div>
 
-  <!-- MODAL: TEACHER SUPERVISION RECORD -->
-  <div id="supervisionModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+  <div id="supervisionModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center pb-2 border-b">
-        <h3 class="text-lg font-bold text-slate-800">บันทึกการออกนิเทศนักศึกษา</h3>
-        <button onclick="closeModal('supervisionModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <h3 class="text-base sm:text-lg font-bold text-slate-800">บันทึกการออกนิเทศนักศึกษา</h3>
+        <button onclick="closeModal('supervisionModal')" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
 
       <form onsubmit="saveSupervisionRecord(event)" class="space-y-3">
@@ -389,7 +410,7 @@
         
         <div>
           <label class="block text-xs font-medium mb-1">ครั้งที่ (สูงสุด 3 ครั้ง/ภาคเรียน)</label>
-          <select id="supRound" required class="w-full px-3 py-2 border rounded-lg text-sm">
+          <select id="supRound" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
             <option value="1">ครั้งที่ 1</option>
             <option value="2">ครั้งที่ 2</option>
             <option value="3">ครั้งที่ 3</option>
@@ -398,12 +419,12 @@
         
         <div>
           <label class="block text-xs font-medium mb-1">วันที่นิเทศ</label>
-          <input type="date" id="supDate" required class="w-full px-3 py-2 border rounded-lg text-sm">
+          <input type="date" id="supDate" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
         </div>
         
         <div>
           <label class="block text-xs font-medium mb-1">ช่องทางการนิเทศ</label>
-          <select id="supChannel" required class="w-full px-3 py-2 border rounded-lg text-sm">
+          <select id="supChannel" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm">
             <option value="สถานประกอบการ">สถานประกอบการ (On-site)</option>
             <option value="โทรศัพท์">โทรศัพท์ (Phone Call)</option>
             <option value="Video Call">Video Call</option>
@@ -412,7 +433,7 @@
         
         <div>
           <label class="block text-xs font-medium mb-1">บันทึกผลการนิเทศ</label>
-          <textarea id="supNote" rows="3" required class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
+          <textarea id="supNote" rows="3" required class="w-full px-3 py-2 border rounded-lg text-xs sm:text-sm"></textarea>
         </div>
 
         <div class="pt-2 border-t">
@@ -429,7 +450,7 @@
           </div>
         </div>
 
-        <button type="submit" id="btnSaveSup" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition">
+        <button type="submit" id="btnSaveSup" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm">
           บันทึกการนิเทศ
         </button>
       </form>
@@ -442,866 +463,87 @@
   </div>
 
   <script>
-    // 🔗 URL ปลายทางของ Google Apps Script Web App
-    const API_URL = "https://script.google.com/macros/s/AKfycby3Z5I3R6NiY0WYE3-nQMObINo48qSVIUO1GgOpEbssl6KQFR6GrB7mh9Mbq86FKybp/exec";
+    // สลับโหมดมุมมองตาราง / การ์ด
+    let currentViewMode = 'table';
 
-    const LOCATION_DATA = {
-      "กรุงเทพมหานคร": {
-        "เขตพระนคร": ["พระบรมมหาราชวัง", "วังบูรพาภิรมย์", "วัดราชบพิธ", "สำราญราษฎร์", "ศาลเจ้าพ่อเสือ", "เสาชิงช้า", "บวรนิเวศ", "ตลาดยอด", "ชนะสงคราม", "บ้านพานถม", "บางขุนพรหม", "วัดสามพระยา"],
-        "เขตดุสิต": ["ดุสิต", "วชิรพยาบาล", "สวนจิตรลดา", "สี่แยกมหานาค", "ถนนนครไชยศรี"],
-        "เขตหนองจอก": ["กระทุ่มราย", "หนองจอก", "คลองสิบ", "คลองสิบสอง", "โคกแฝด", "คู้ฝั่งเหนือ", "ลำผักชี", "ลำต้อยติ่ง"],
-        "เขตบางรัก": ["มหาพฤฒาราม", "สีลม", "สุริยวงศ์", "บางรัก", "สี่พระยา"],
-        "เขตบางเขน": ["อนุสาวรีย์", "ท่าแร้ง"],
-        "เขตบางกะปิ": ["คลองจั่น", "หัวหมาก"],
-        "เขตปทุมวัน": ["รองเมือง", "วังใหม่", "ปทุมวัน", "ลุมพินี"],
-        "เขตป้อมปราบศัตรูพ่าย": ["ป้อมปราบ", "วัดเทพศิรินทร์", "คลองมหานาค", "บ้านบาตร", "วัดโสมนัส"],
-        "เขตพระโขนง": ["บางจาก", "พระโขนงใต้"],
-        "เขตมีนบุรี": ["มีนบุรี", "แสนแสบ"],
-        "เขตลาดกระบัง": ["ลาดกระบัง", "คลองสองต้นนุ่น", "คลองสามประเวศ", "ลำปลาทิว", "ทับยาว", "ขุมทอง"],
-        "เขตยานนาวา": ["ทุ่งวัดดอน", "ยานนาวา", "บางโพงพาง"],
-        "เขตสัมพันธวงศ์": ["จักรวรรดิ", "สัมพันธวงศ์", "ตลาดน้อย"],
-        "เขตพญาไท": ["สามเสนใน", "พญาไท"],
-        "เขตธนบุรี": ["วัดกัลยาณ์", "หิรัญรูจี", "บางยี่เรือ", "บุคคโล", "ตลาดพลู", "ดาวคะนอง", "สำเหร่", "บางไส้ไก่"],
-        "เขตบางกอกใหญ่": ["วัดอรุณ", "วัดท่าพระ"],
-        "เขตห้วยขวาง": ["ห้วยขวาง", "บางกะปิ", "สามเสนนอก"],
-        "เขตคลองสาน": ["สมเด็จเจ้าพระยา", "คลองสาน", "บางลำภูล่าง", "คลองต้นไทร"],
-        "เขตตลิ่งชัน": ["คลองชักพระ", "ตลิ่งชัน", "ฉิมพลี", "บางพรม", "บางระมาด", "บางเชือกหนัง"],
-        "เขตบางกอกน้อย": ["ศิริราช", "บ้านช่างหล่อ", "บางขุนนนท์", "บางขุนศรี", "อรุณอมรินทร์"],
-        "เขตบางขุนเทียน": ["ท่าข้าม", "แสมดำ"],
-        "เขตภาษีเจริญ": ["บางหว้า", "บางด้วน", "บางจาก", "บางแวก", "คลองขวาง", "ปากคลองภาษีเจริญ", "คูหาสวรรค์"],
-        "เขตหนองแขม": ["หนองแขม", "หนองค้างพลู"],
-        "เขตราษฎร์บูรณะ": ["ราษฎร์บูรณะ", "บางปะกอก"],
-        "เขตบางพลัด": ["บางพลัด", "บางอ้อ", "บางบำหรุ", "บางยี่ขัน"],
-        "เขตดินแดง": ["ดินแดง", "รัชดาภิเษก"],
-        "เขตบึงกุ่ม": ["คลองกุ่ม", "นวมินทร์", "นวลจันทร์"],
-        "เขตสาทร": ["ทุ่งวัดดอน", "ยานนาวา", "ทุ่งมหาเมฆ"],
-        "เขตบางซื่อ": ["บางซื่อ", "วงศ์สว่าง"],
-        "เขตจตุจักร": ["ลาดยาว", "เสนานิคม", "จันทรเกษม", "จอมพล", "จตุจักร"],
-        "เขตบางคอแหลม": ["บางคอแหลม", "วัดพระยาไกร", "บางโคล่"],
-        "เขตประเวศ": ["ประเวศ", "หนองบอน", "ดอกไม้"],
-        "เขตคลองเตย": ["คลองเตย", "คลองตัน", "พระโขนง"],
-        "เขตสวนหลวง": ["สวนหลวง", "พัฒนาการ", "อ่อนนุช"],
-        "เขตจอมทอง": ["บางขุนเทียน", "บางค้อ", "บางมด", "จอมทอง"],
-        "เขตดอนเมือง": ["ดอนเมือง", "สีกัน", "สนามบิน"],
-        "เขตราชเทวี": ["ทุ่งพญาไท", "ถนนพญาไท", "มักกะสัน", "ถนนเพชรบุรี"],
-        "เขตลาดพร้าว": ["ลาดพร้าว", "จรเข้บัว"],
-        "เขตวัฒนา": ["คลองเตยเหนือ", "คลองตันเหนือ", "พระโขนงเหนือ"],
-        "เขตบางแค": ["บางแค", "บางแคเหนือ", "บางไผ่", "หลักสอง"],
-        "เขตหลักสี่": ["ทุ่งสองห้อง", "ตลาดบางเขน"],
-        "เขตสายไหม": ["สายไหม", "ออเงิน", "คลองถนน"],
-        "เขตคันนายาว": ["คันนายาว", "รามอินทรา"],
-        "เขตสะพานสูง": ["สะพานสูง", "ราษฎร์พัฒนา", "ทับช้าง"],
-        "เขตวังทองหลาง": ["วังทองหลาง", "คลองเจ้าคุณสิงห์", "พลับพลา"],
-        "เขตคลองสามวา": ["สามวาตะวันตก", "สามวาตะวันออก", "บางชัน", "ทรายกองดิน", "ทรายกองดินใต้"],
-        "เขตบางนา": ["บางนาเหนือ", "บางนาใต้"],
-        "เขตทวีวัฒนา": ["ทวีวัฒนา", "ศาลาธรรมสพน์"],
-        "เขตทุ่งครุ": ["บางมด", "ทุ่งครุ"],
-        "เขตบางบอน": ["บางบอนเหนือ", "บางบอนใต้", "คลองบางพราน", "คลองบางบอน"]
-      },
-      "สมุทรปราการ": {
-        "เมืองสมุทรปราการ": ["ปากน้ำ", "สำโรงเหนือ", "บางเมือง", "ท้ายบ้าน", "ท้ายบ้านใหม่", "บางปูใหม่", "แพรกษา", "บางโปรง", "บางปู", "บางด้วน", "บางเมืองใหม่", "เทพารักษ์", "แพรกษาใหม่"],
-        "บางบ่อ": ["บางบ่อ", "บ้านระกาศ", "บางพลีน้อย", "บางเพรียง", "คลองด่าน", "คลองนิยมยาตรา", "คลองสวน", "เปร็ง"],
-        "บางพลี": ["บางแก้ว", "บางโฉลง", "บางปลา", "บางพลีใหญ่", "ราชาเทวะ", "หนองปรือ"],
-        "พระประแดง": ["ตลาด", "บางพึ่ง", "บางจาก", "บางครุ", "บางหญ้าแพรก", "บางหัวเสือ", "สำโรง", "สำโรงกลาง", "สำโรงใต้", "ทรงคนอง", "บางกระสอบ", "บางยอ", "บางน้ำผึ้ง", "บางกะเจ้า", "บางกอบัว"],
-        "พระสมุทรเจดีย์": ["นาเกลือ", "บ้านคลองสวน", "แหลมฟ้าผ่า", "ปากคลองบางปลากด", "ในคลองบางปลากด"],
-        "บางเสาธง": ["บางเสาธง", "ศีรษะจรเข้น้อย", "ศีรษะจรเข้ใหญ่"]
-      },
-      "สมุทรสาคร": {
-        "เมืองสมุทรสาคร": ["มหาชัย", "ท่าฉลอม", "โกรกกราก", "บ้านเกาะ", "บางกระเจ้า", "บางหญ้าแพรก", "ชัยมงคล", "ท่าทราย", "นาดี", "คอกกระบือ", "บางน้ำจืด", "พันท้ายนรสิงห์", "โคกขาม", "บ้านบ่อ", "บางโทรัด", "กาหลง", "นาโคก"],
-        "กระทุ่มแบน": ["ตลาดกระทุ่มแบน", "อ้อมน้อย", "ท่าไม้", "สวนหลวง", "คลองมะเดื่อ", "แคราย", "ท่าเสา", "ดอนไก่ดี", "บางยาง", "หนองนกไข่"],
-        "บ้านแพ้ว": ["บ้านแพ้ว", "หลักสาม", "ยกกระบัตร", "โรงเข้", "หนองบัว", "หนองสองห้อง", "เจ็ดริ้ว", "คลองตัน", "เกษตรพัฒนา", "อำแพง", "สวนส้ม", "หลักสอง"]
-      },
-      "สมุทรสงคราม": {
-        "เมืองสมุทรสงคราม": ["แม่กลอง", "บางขันแตก", "ลาดใหญ่", "บ้านปรก", "บางแก้ว", "ท้ายหาด", "แหลมใหญ่", "คลองเขิน", "คลองโคน", "นางตะเคียน"],
-        "บางคนที": ["บางคนที", "กระดังงา", "จอมปลวก", "บางยี่รงค์", "บางสะแก", "บ้านปราโมทย์", "บางพรม", "บางนกแขวก", "แควอ้อม", "ดอนมะโนรา", "ยายแพง"],
-        "อัมพวา": ["อัมพวา", "สวนหลวง", "ท่าคา", "วัดประดู่", "เหมืองใหม่", "บางช้าง", "แควอ้อม", "ปลายโพงพาง", "แพรกหนามแดง", "ยี่สาร", "บางแค"]
-      },
-      "นนทบุรี": {
-        "เมืองนนทบุรี": ["สวนใหญ่", "ตลาดขวัญ", "บางเขน", "บางกระสอ", "ท่าทราย", "บางไผ่", "บางศรีเมือง", "บางกร่าง", "ไทรม้า", "บางรักน้อย"],
-        "บางกรวย": ["บางกรวย", "บางสีทอง", "บางขนุน", "บางขุนกอง", "บางคูเวียง", "มหาสวัสดิ์", "ปลายบาง", "ศาลากลาง"],
-        "บางใหญ่": ["โสนลอย", "บางม่วง", "บางแม่นาง", "บางเลน", "เสาธงหิน", "บ้านใหม่"],
-        "บางบัวทอง": ["โสนลอย", "บางบัวทอง", "บางรักใหญ่", "บางรักพัฒนา", "พิมลราช", "บางคูรัด", "ละหาร", "ลำโพ", "พ้อไทร"],
-        "ไทรน้อย": ["ไทรน้อย", "ราษฎร์นิยม", "หนองเพรางาย", "ไทรใหญ่", "ขุนศรี", "คลองขวาง", "ทวีวัฒนา"],
-        "ปากเกร็ด": ["ปากเกร็ด", "บางตลาด", "บางพูด", "บ้านใหม่", "บางตะไนย์", "คลองพระอุดม", "ท่าอิฐ", "เกาะเกร็ด", "อ้อมเกร็ด", "คลองข่อย", "บางพลับ"]
-      },
-      "ปทุมธานี": {
-        "เมืองปทุมธานี": ["บางปรอก", "บ้านใหม่", "บ้านกลาง", "บ้านฉาง", "บ้านกระแชง", "บางขะแยง", "บางคูวัด", "บางหลวง", "บางเดื่อ", "บางพูด", "บางพูน", "บางกะดี"],
-        "คลองหลวง": ["คลองหนึ่ง", "คลองสอง", "คลองสาม", "คลองสี่", "คลองห้า", "คลองหก", "คลองเจ็ด"],
-        "ธัญบุรี": ["ประชาธิปัตย์", "บึงยี่โถ", "รังสิต", "ลำผักกูด", "บึงสนั่น", "บึงน้ำรักษ์"],
-        "หนองเสือ": ["บึงบา", "บึงบอน", "บึงกาสาม", "บึงชำอ้อ", "หนองสามวัง", "ศาลาครุ", "นพรัตน์"],
-        "ลาดหลุมแก้ว": ["ระแหง", "ลาดหลุมแก้ว", "คูบางหลวง", "คูขวาง", "คลองพระอุดม", "บ่อเงิน", "หน้าไม้"],
-        "ลำลูกกา": ["คูคต", "ลำลูกกา", "บึงคำพร้อย", "ลาดสวาย", "บึงทองหลาง", "ลำไทร", "บึงคอไห", "พืชอุดม"],
-        "สามโคก": ["บางเตย", "คลองควาย", "สามโคก", "กระแชง", "ท้ายเกาะ", "บางโพธิ์เหนือ", "เชียงรากใหญ่", "บ้านปทุม", "เชียงรากน้อย", "บางกระบือ", "บ้านงิ้ว"]
-      },
-      "ชลบุรี": {
-        "เมืองชลบุรี": ["บางปลาสร้อย", "มะขามหย่ง", "บ้านโขด", "แสนสุข", "บ้านสวน", "หนองรี", "นาป่า", "หนองข้างคอก", "ดอนหัวฬ่อ", "หนองไม้แดง", "บางทราย", "คลองตำหรุ", "เหมือง", "บ้านปึก", "ห้วยกะปิ", "เสม็ด", "อ่างศิลา", "สำนักบก"],
-        "บ้านบึง": ["บ้านบึง", "คลองกิ่ว", "มาบไผ่", "หนองซ้ำซาก", "หนองบอนแดง", "หนองชาก", "หนองอิรุณ", "หนองไผ่แก้ว"],
-        "หนองใหญ่": ["หนองใหญ่", "คลองพลู", "หนองเสือช้าง", "ห้างสูง", "เขาซก"],
-        "บางละมุง": ["บางละมุง", "หนองปรือ", "หนองปลาไหล", "โป่ง", "เขาไม้แก้ว", "ห้วยใหญ่", "ตะเคียนเตี้ย", "นาเกลือ"],
-        "พานทอง": ["พานทอง", "หนองตำลึง", "มาบโป่ง", "หนองกะขะ", "หนองหงษ์", "โคกขี้หนอน", "บ้านเก่า", "หน้าประดู่", "บางนาง", "เกาะลอย", "บางหัก"],
-        "พนัสนิคม": ["พนัสนิคม", "หน้าพระธาตุ", "วัดหลวง", "กุฎโง้ง", "บ้านเซิด", "นาเริก", "หมอนนาง", "สระสี่เหลี่ยม", "วัดโบสถ์", "หัวถนน", "ท่าข้าม", "หนองปรือ", "หนองขยาด", "ทุ่งขวาง", "หนองเหียง", "นามะตูม", "ไร่หลักทอง", "โคกเพลาะ"],
-        "ศรีราชา": ["ศรีราชา", "สุรศักดิ์", "ทุ่งสุขลา", "บึง", "หนองขาม", "เขาคันทรง", "บางพระ", "บ่อวิน"],
-        "เกาะสีชัง": ["ท่าเทววงษ์"],
-        "สัตหีบ": ["สัตหีบ", "นาจอมเทียน", "พลูตาหลวง", "บางเสร่", "แสมสาร"],
-        "บ่อทอง": ["บ่อทอง", "วัดสุวรรณ", "บ่อกวางทอง", "ธาตุทอง", "เกษตรสุวรรณ", "พลวงทอง"],
-        "เกาะจันทร์": ["เกาะจันทร์", "ท่าบุญมี"]
-      },
-      "ระยอง": {
-        "เมืองระยอง": ["ท่าประดู่", "เชิงเนิน", "ตะพง", "ปากน้ำ", "เพ", "แกลง", "บ้านแลง", "นาตาขวัญ", "เนินพระ", "กะเฉด", "ทับมา", "น้ำคอก", "ห้วยโป่ง", "มาบตาพุด", "สำนักทอง"],
-        "บ้านฉาง": ["บ้านฉาง", "พลา", "พังราด"],
-        "แกลง": ["ทางเกวียน", "วังหว้า", "ชากโดน", "เนินฆ้อ", "กร่ำ", "ชากพง", "กระแสบน", "บ้านนา", "ทุ่งควายกิน", "กองดิน", "คลองปูน", "พังราด", "ปากน้ำกระแส", "ห้วยยาง", "สองสลึง"],
-        "วังจันทร์": ["วังจันทร์", "ชุมแสง", "ป่ายุบใน", "พลงตาเอี่ยม"],
-        "บ้านค่าย": ["บ้านค่าย", "หนองละลอก", "หนองตะพาน", "ตาขัน", "บางบุตร", "หนองบัว", "ชากบก"],
-        "ปลวกแดง": ["ปลวกแดง", "ตาสิทธิ์", "ละหาร", "แม่น้ำคู้", "มาบยางพร", "หนองไร่"],
-        "เขาชะเมา": ["น้ำเป็น", "ห้วยทับมอญ", "ชำฆ้อ", "เขาน้อย"],
-        "นิคมพัฒนา": ["นิคมพัฒนา", "มาบข่า", "พนานิคม", "มะขามคู่"]
-      }
-    };
+    function switchViewMode(mode) {
+      currentViewMode = mode;
+      const tableView = document.getElementById('studentTableView');
+      const cardsView = document.getElementById('studentCardsView');
+      const btnTable = document.getElementById('btnViewTable');
+      const btnCards = document.getElementById('btnViewCards');
 
-    let currentUser = null;
-    let allStudentData = [];
-    let activeFormData = null;
-    let isEditingProfile = false;
-
-    // 🌐 ฟังก์ชันหลักสำหรับส่ง HTTP Request ไปยัง Google Apps Script Backend
-    async function callApi(action, payload = {}) {
-      try {
-        const token = sessionStorage.getItem("sessionToken") || "";
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify({
-            action: action,
-            payload: { ...payload, token: token }
-          })
-        });
-
-        const res = await response.json();
-        return res;
-      } catch (err) {
-        console.error("API Call Error:", err);
-        return { success: false, message: "ไม่สามารถเชื่อมต่อเครื่องแม่ข่ายได้: " + err.message };
-      }
-    }
-
-    window.onload = function() {
-      const provSelect = document.getElementById('province');
-      const filterProv = document.getElementById('filterProvince');
-      Object.keys(LOCATION_DATA).forEach(p => {
-        provSelect.add(new Option(p, p));
-        filterProv.add(new Option(p, p));
-      });
-    };
-
-    function showToast(message, isSuccess = true) {
-      const toast = document.getElementById('toastNotification');
-      const icon = document.getElementById('toastIcon');
-      const title = document.getElementById('toastTitle');
-      const msg = document.getElementById('toastMessage');
-
-      title.innerText = isSuccess ? "สำเร็จ" : "แจ้งเตือน";
-      msg.innerText = message;
-      
-      if(isSuccess) {
-        icon.className = "text-2xl text-emerald-500";
-        icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-      } else {
-        icon.className = "text-2xl text-red-500";
-        icon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
-      }
-
-      toast.classList.remove('hidden');
-      setTimeout(() => { hideToast(); }, 4000);
-    }
-
-    function hideToast() {
-      document.getElementById('toastNotification').classList.add('hidden');
-    }
-
-    function switchLoginTab(role) {
-      document.getElementById('loginRole').value = role;
-      if(role === 'student') {
-        document.getElementById('tabStudent').className = "w-1/2 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600";
-        document.getElementById('tabTeacher').className = "w-1/2 py-2 font-semibold text-slate-400 border-b-2 border-transparent";
-        document.getElementById('userLabel').innerText = "รหัสนักศึกษา";
-        document.getElementById('passwordGroup').classList.add('hidden');
-      } else {
-        document.getElementById('tabTeacher').className = "w-1/2 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600";
-        document.getElementById('tabStudent').className = "w-1/2 py-2 font-semibold text-slate-400 border-b-2 border-transparent";
-        document.getElementById('userLabel').innerText = "Username (ครู/Admin)";
-        document.getElementById('passwordGroup').classList.remove('hidden');
-      }
-    }
-
-    async function handleLogin(e) {
-      e.preventDefault();
-      const role = document.getElementById('loginRole').value;
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-
-      showToast("กำลังเข้าสู่ระบบ...", true);
-
-      const res = await callApi("login", { username: user, password: pass, role: role });
-      const data = res.data || res;
-
-      if (res.success && data.token) {
-        currentUser = data;
-        sessionStorage.setItem("sessionToken", data.token);
-
-        document.getElementById('loginSection').classList.add('hidden');
-        document.getElementById('userInfo').classList.remove('hidden');
+      if (mode === 'cards') {
+        tableView.classList.add('hidden');
+        cardsView.classList.remove('hidden');
         
-        let roleLabel = 'ครู';
-        if (data.role === 'student') roleLabel = 'นักศึกษา';
-        if (data.role === 'admin') roleLabel = 'ผู้ดูแลระบบ';
-        
-        document.getElementById('userBadge').innerText = `${data.name} (${roleLabel})`;
-
-        if (data.role === 'student') {
-          loadStudentDashboard(data.studentId);
-        } else {
-          loadTeacherDashboard();
-        }
-        showToast("เข้าสู่ระบบเรียบร้อยแล้ว", true);
+        btnCards.className = "px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-indigo-700 shadow-sm transition";
+        btnTable.className = "px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition";
+        renderCardsView();
       } else {
-        showToast(res.error || data.message || "เข้าสู่ระบบไม่สำเร็จ", false);
+        cardsView.classList.add('hidden');
+        tableView.classList.remove('hidden');
+
+        btnTable.className = "px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-indigo-700 shadow-sm transition";
+        btnCards.className = "px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition";
       }
     }
 
-    function logout() {
-      currentUser = null;
-      allStudentData = [];
-      activeFormData = null;
-      sessionStorage.removeItem("sessionToken");
-
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-      document.getElementById('studentDashboard').classList.add('hidden');
-      document.getElementById('teacherDashboard').classList.add('hidden');
-      document.getElementById('userInfo').classList.add('hidden');
-      document.getElementById('loginSection').classList.remove('hidden');
+    // ฟังก์ชันสร้าง Card View สำหรับ Mobile
+    function renderCardsView() {
+      const cardsContainer = document.getElementById('studentCardsView');
+      const tableRows = document.querySelectorAll('#teacherStudentTable tr');
       
-      switchLoginTab('student');
-      showToast("ออกจากระบบเรียบร้อยแล้ว", true);
-    }
-
-    // ---------- STUDENT LOGIC ----------
-    async function loadStudentDashboard(studentId) {
-      const res = await callApi("getStudentData", { studentId: studentId });
-      const st = res.data || res;
-
-      if (!res.success && !st.studentId) {
-        showToast("ไม่พบข้อมูลนักศึกษาในระบบ", false);
+      if (tableRows.length === 0 || (tableRows.length === 1 && tableRows[0].cells.length === 1)) {
+        cardsContainer.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs bg-white rounded-2xl col-span-full border">ไม่พบข้อมูลนักศึกษา</div>`;
         return;
       }
 
-      activeFormData = st;
-      document.getElementById('studentDashboard').classList.remove('hidden');
-      
-      const alertBox = document.getElementById('statusAlert');
-      const btnForm = document.getElementById('btnOpenForm');
-      alertBox.classList.remove('hidden');
+      let cardsHtml = '';
+      tableRows.forEach(row => {
+        const cells = row.children;
+        if (cells.length < 10) return;
 
-      if (st.status === 'Inactive') {
-        alertBox.className = "p-4 rounded-xl bg-red-100 text-red-800 border border-red-200";
-        alertBox.innerHTML = `<div><i class="fa-solid fa-lock mr-2"></i><b>สถานะ Inactive:</b> สิทธิ์ของคุณถูกระงับ ไม่สามารถแก้ไขข้อมูลคำร้องได้</div>`;
-        
-        btnForm.disabled = true;
-        btnForm.onclick = null;
-        btnForm.className = "w-full bg-slate-100 text-slate-400 font-semibold py-2 rounded-lg text-sm cursor-not-allowed border border-slate-200";
-      } else {
-        alertBox.className = "p-4 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-200";
-        alertBox.innerHTML = `<div><i class="fa-solid fa-circle-check mr-2"></i><b>สถานะ Active:</b> คุณสามารถเข้าใช้งานและแก้ไขคำร้องได้ปกติ</div>`;
-        
-        btnForm.disabled = false;
-        btnForm.onclick = openFormModal;
-        btnForm.className = "w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-lg text-sm transition";
-      }
-
-      document.getElementById('stIdView').innerText = st.studentId || '';
-      document.getElementById('stNameView').innerText = (st.prefix || '') + (st.fullname || '');
-      document.getElementById('stLevelView').innerText = st.level || '';
-      document.getElementById('stDeptView').innerText = st.department || '';
-      document.getElementById('stNoView').innerText = st.studentNo || '-';
-      document.getElementById('stShiftView').innerText = st.shift || '-';
-      document.getElementById('stPhoneView').innerText = st.phone || '-';
-      document.getElementById('stEmailView').innerText = st.email || '-';
-      document.getElementById('stAdvisorView').innerText = st.advisor || '-';
-
-      document.getElementById('editPrefix').value = st.prefix || '';
-      document.getElementById('editFullname').value = st.fullname || '';
-      document.getElementById('editLevel').value = st.level || '';
-      document.getElementById('editDept').value = st.department || '';
-      document.getElementById('editNo').value = st.studentNo || '';
-      document.getElementById('editShift').value = st.shift || '';
-      document.getElementById('editPhone').value = st.phone || '';
-      document.getElementById('editEmail').value = st.email || '';
-      document.getElementById('editAdvisor').value = st.advisor || '';
-
-      document.getElementById('startDate').value = st.startDate || '';
-      document.getElementById('endDate').value = st.endDate || '';
-      document.getElementById('companyName').value = st.companyName || '';
-      document.getElementById('toPerson').value = st.toPerson || '';
-      document.getElementById('address').value = st.address || '';
-      document.getElementById('companyPhone').value = st.companyPhone || '';
-      document.getElementById('zipcode').value = st.zipcode || '';
-      document.getElementById('coordinatorName').value = st.coordinatorName || '';
-      document.getElementById('coordinatorPos').value = st.coordinatorPos || '';
-      document.getElementById('coordinatorPhone').value = st.coordinatorPhone || '';
-
-      if (st.province) {
-        document.getElementById('province').value = st.province;
-        onProvinceChange();
-        document.getElementById('district').value = st.district;
-        onDistrictChange();
-        document.getElementById('subdistrict').value = st.subdistrict;
-      }
-    }
-
-    function toggleEditProfile() {
-      isEditingProfile = !isEditingProfile;
-      const vBox = document.getElementById('profileViewMode');
-      const eBox = document.getElementById('profileEditMode');
-      const btn = document.getElementById('btnToggleEditProfile');
-
-      if(isEditingProfile) {
-        vBox.classList.add('hidden');
-        eBox.classList.remove('hidden');
-        btn.innerHTML = '<i class="fa-solid fa-xmark mr-1"></i> ยกเลิกการแก้ไข';
-        btn.className = "text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-2.5 py-1 rounded-lg border border-slate-300 font-semibold transition";
-      } else {
-        vBox.classList.remove('hidden');
-        eBox.classList.add('hidden');
-        btn.innerHTML = '<i class="fa-solid fa-pen-to-square mr-1"></i> แก้ไขข้อมูลส่วนตัว';
-        btn.className = "text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg border border-amber-300 font-semibold transition";
-      }
-    }
-
-    async function toggleFixDate(chk) {
-      if(chk.checked) {
-        const res = await callApi("getFixDate");
-        const fix = res.data || res;
-        if(fix.startDate) document.getElementById('startDate').value = fix.startDate;
-        if(fix.endDate) document.getElementById('endDate').value = fix.endDate;
-      }
-    }
-
-    function onProvinceChange() {
-      const p = document.getElementById('province').value;
-      const distSelect = document.getElementById('district');
-      const subSelect = document.getElementById('subdistrict');
-      distSelect.innerHTML = '<option value="">-- เลือกเขต/อำเภอ --</option>';
-      subSelect.innerHTML = '<option value="">-- เลือกแขวง/ตำบล --</option>';
-
-      if(p && LOCATION_DATA[p]) {
-        Object.keys(LOCATION_DATA[p]).forEach(d => distSelect.add(new Option(d, d)));
-      }
-    }
-
-    function onDistrictChange() {
-      const p = document.getElementById('province').value;
-      const d = document.getElementById('district').value;
-      const subSelect = document.getElementById('subdistrict');
-      subSelect.innerHTML = '<option value="">-- เลือกแขวง/ตำบล --</option>';
-
-      if(p && d && LOCATION_DATA[p][d]) {
-        LOCATION_DATA[p][d].forEach(s => subSelect.add(new Option(s, s)));
-      }
-    }
-
-    function formatThaiDate(dateString) {
-      if (!dateString) return '';
-      const thaiMonths = [
-        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
-        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
-      ];
-      const parts = String(dateString).split('-');
-      if (parts.length !== 3) return dateString;
-      let year = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
-      if (year < 2400) year += 543;
-      return `${day} ${thaiMonths[month]} ${year}`;
-    }
-
-    function previewForm(e) {
-      e.preventDefault();
-      document.getElementById('stReqForm').classList.add('hidden');
-      document.getElementById('previewSection').classList.remove('hidden');
-
-      const startThai = formatThaiDate(document.getElementById('startDate').value);
-      const endThai = formatThaiDate(document.getElementById('endDate').value);
-      
-      const compName = document.getElementById('companyName').value;
-      const addr = document.getElementById('address').value;
-      const sub = document.getElementById('subdistrict').value;
-      const dist = document.getElementById('district').value;
-      const prov = document.getElementById('province').value;
-      const zip = document.getElementById('zipcode').value;
-
-      const tempFullAddress = `${compName} ${addr} ${sub} ${dist} ${prov} ${zip}`;
-      const tempMapUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(tempFullAddress);
-
-      const prefixVal = isEditingProfile ? document.getElementById('editPrefix').value : activeFormData.prefix;
-      const nameVal = isEditingProfile ? document.getElementById('editFullname').value : activeFormData.fullname;
-
-      const html = `
-        <p class="text-indigo-900 font-bold"><b>ชื่อ-นามสกุล นักศึกษา:</b> ${prefixVal}${nameVal}</p>
-        <p><b>สถานประกอบการ:</b> ${compName}</p>
-        <p><b>ระยะเวลา:</b> ${startThai} ถึง ${endThai}</p>
-        <p><b>เรียน:</b> ${document.getElementById('toPerson').value}</p>
-        <p><b>ที่อยู่:</b> ${addr} ต.${sub} อ.${dist} จ.${prov} ${zip}</p>
-        <p><b>โทรศัพท์:</b> ${document.getElementById('companyPhone').value}</p>
-        <p><b>แผนที่หมุดปัก:</b> <a href="${tempMapUrl}" target="_blank" class="text-indigo-600 underline"><i class="fa-solid fa-map-location-dot"></i> คลิกดูตัวอย่างแผนที่ Map</a></p>
-      `;
-      document.getElementById('previewContent').innerHTML = html;
-    }
-
-    function editForm() {
-      document.getElementById('stReqForm').classList.remove('hidden');
-      document.getElementById('previewSection').classList.add('hidden');
-    }
-
-    async function submitForm() {
-      const payload = {
-        studentId: currentUser.studentId,
-        prefix: isEditingProfile ? document.getElementById('editPrefix').value : activeFormData.prefix,
-        fullname: isEditingProfile ? document.getElementById('editFullname').value : activeFormData.fullname,
-        level: isEditingProfile ? document.getElementById('editLevel').value : activeFormData.level,
-        department: isEditingProfile ? document.getElementById('editDept').value : activeFormData.department,
-        studentNo: isEditingProfile ? document.getElementById('editNo').value : activeFormData.studentNo,
-        shift: isEditingProfile ? document.getElementById('editShift').value : activeFormData.shift,
-        phone: isEditingProfile ? document.getElementById('editPhone').value : activeFormData.phone,
-        email: isEditingProfile ? document.getElementById('editEmail').value : activeFormData.email,
-        advisor: isEditingProfile ? document.getElementById('editAdvisor').value : activeFormData.advisor,
-
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value,
-        companyName: document.getElementById('companyName').value,
-        toPerson: document.getElementById('toPerson').value,
-        address: document.getElementById('address').value,
-        province: document.getElementById('province').value,
-        district: document.getElementById('district').value,
-        subdistrict: document.getElementById('subdistrict').value,
-        zipcode: document.getElementById('zipcode').value,
-        companyPhone: document.getElementById('companyPhone').value,
-        coordinatorName: document.getElementById('coordinatorName').value,
-        coordinatorPos: document.getElementById('coordinatorPos').value,
-        coordinatorPhone: document.getElementById('coordinatorPhone').value
-      };
-
-      const res = await callApi("saveStudentForm", payload);
-      const data = res.data || res;
-
-      if (res.success || data.success) {
-        showToast(data.message || "บันทึกข้อมูลคำร้องเรียบร้อยแล้ว", true);
-        closeModal('formModal');
-        editForm();
-        loadStudentDashboard(currentUser.studentId);
-      } else {
-        showToast("บันทึกไม่สำเร็จ: " + (res.error || data.message), false);
-      }
-    }
-
-    async function downloadDoc(type) {
-      const docId = type === 'req' ? "1J0AP1yh1VrahHDhl14B1IXloupND_Ft2QxJ5OFBzmYA" : "1-Vl5iUrRP7oWbboLb4bX3YdmsU-_kIg5Cj1Cb79vUE0";
-      const docName = type === 'req' ? 'ใบคำร้อง' : 'หนังสือส่งตัว';
-
-      showToast("กำลังสร้างเอกสาร PDF กรุณารอสักครู่...", true);
-
-      const res = await callApi("generatePDF", {
-        studentId: currentUser.studentId,
-        templateDocId: docId,
-        docType: docName
-      });
-      const data = res.data || res;
-
-      if (res.success && data.base64) {
-        const link = document.createElement('a');
-        link.href = "data:application/pdf;base64," + data.base64;
-        link.download = data.filename;
-        link.click();
-        showToast("ดาวน์โหลดเอกสารสำเร็จ", true);
-      } else {
-        showToast("เกิดข้อผิดพลาด: " + (res.error || data.message), false);
-      }
-    }
-
-    async function downloadDocByTeacher(studentId, type) {
-      const docId = type === 'req' ? "1J0AP1yh1VrahHDhl14B1IXloupND_Ft2QxJ5OFBzmYA" : "1-Vl5iUrRP7oWbboLb4bX3YdmsU-_kIg5Cj1Cb79vUE0";
-      const docName = type === 'req' ? 'ใบคำร้อง' : 'หนังสือส่งตัว';
-
-      showToast("กำลังสร้างเอกสาร PDF กรุณารอสักครู่...", true);
-
-      const res = await callApi("generatePDF", {
-        studentId: studentId,
-        templateDocId: docId,
-        docType: docName
-      });
-      const data = res.data || res;
-
-      if (res.success && data.base64) {
-        const link = document.createElement('a');
-        link.href = "data:application/pdf;base64," + data.base64;
-        link.download = data.filename;
-        link.click();
-        showToast("ดาวน์โหลดเอกสารสำเร็จ", true);
-      } else {
-        showToast("เกิดข้อผิดพลาด: " + (res.error || data.message), false);
-      }
-    }
-
-    // ---------- TEACHER & ADMIN LOGIC ----------
-    async function loadTeacherDashboard() {
-      document.getElementById('teacherDashboard').classList.remove('hidden');
-      
-      const isAdmin = currentUser && currentUser.role === 'admin';
-      document.getElementById('lblStatTotalTitle').innerText = isAdmin ? 'จำนวนนักศึกษาทั้งหมด' : 'จำนวนนักศึกษาที่ดูแล';
-      document.getElementById('dashboardHeading').innerText = isAdmin ? 'แผงควบคุมระบบ (Admin Dashboard)' : 'แผงควบคุมสำหรับครู / อาจารย์นิเทศ';
-
-      loadDashboardStats();
-
-      const res = await callApi("getAllStudents", { user: currentUser });
-      const data = res.data || res;
-
-      if (res.success || Array.isArray(data)) {
-        allStudentData = Array.isArray(data) ? data : (data.students || []);
-        
-        const levelSelect = document.getElementById('filterLevel');
-        levelSelect.innerHTML = '';
-
-        if (!isAdmin && currentUser.classAssigned && currentUser.classAssigned !== 'ALL') {
-          levelSelect.add(new Option(currentUser.classAssigned, currentUser.classAssigned));
-          levelSelect.value = currentUser.classAssigned;
-          levelSelect.disabled = true;
-        } else {
-          levelSelect.disabled = false;
-          levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
-          const levels = [...new Set(allStudentData.map(x => x.level).filter(x => x && x !== '-'))];
-          levels.forEach(lvl => {
-            levelSelect.add(new Option(lvl, lvl));
-          });
-        }
-
-        filterStudents();
-      } else {
-        showToast("โหลดข้อมูลล้มเหลว: " + (res.error || data.message), false);
-      }
-    }
-
-    async function loadDashboardStats() {
-      const res = await callApi("getDashboardStats", { user: currentUser });
-      const stats = res.data || res;
-
-      if (!stats) return;
-      const total = stats.totalStudents || 0;
-
-      document.getElementById('statTotalStudents').innerText = total;
-      document.getElementById('statHasReqInfo').innerText = `${stats.hasReqInfoCount || 0} / ${total}`;
-      document.getElementById('statReqReceived').innerText = `${stats.reqReceivedCount || 0} / ${total}`;
-      document.getElementById('statSendDocIssued').innerText = `${stats.sendDocIssuedCount || 0} / ${total}`;
-
-      document.getElementById('supR1').innerText = stats.supRound1Count || 0;
-      document.getElementById('supR2').innerText = stats.supRound2Count || 0;
-      document.getElementById('supR3').innerText = stats.supRound3Count || 0;
-
-      document.querySelectorAll('.lblTotalSt').forEach(el => el.innerText = total);
-
-      renderLocationStats(stats.locationStats);
-    }
-
-    function renderLocationStats(locStats) {
-      const container = document.getElementById('locationStatsContainer');
-      container.innerHTML = '';
-
-      if (!locStats || Object.keys(locStats).length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 col-span-full">ยังไม่มีข้อมูลสถานประกอบการในระบบ</p>';
-        return;
-      }
-
-      const sortedProvinces = Object.keys(locStats).sort((a, b) => locStats[b].total - locStats[a].total);
-
-      sortedProvinces.forEach(prov => {
-        const pData = locStats[prov];
-        
-        let districtsHtml = '';
-        Object.keys(pData.districts).forEach(dist => {
-          districtsHtml += `
-            <div class="flex justify-between items-center text-xs text-slate-600 border-b border-slate-100 py-1 last:border-0">
-              <span class="truncate pr-2">• ${dist}</span>
-              <span class="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full text-[11px]">${pData.districts[dist]} คน</span>
+        cardsHtml += `
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex justify-between items-start border-b pb-2">
+              <div>
+                <span class="text-xs font-bold text-indigo-600">${cells[0].innerText}</span>
+                <h4 class="font-bold text-slate-800 text-sm">${cells[1].innerText}</h4>
+                <div class="text-[11px] text-slate-500">${cells[2].innerText} | เลขที่ ${cells[3].innerText} (${cells[4].innerText})</div>
+              </div>
+              <div class="text-right">
+                ${cells[11].innerHTML}
+              </div>
             </div>
-          `;
-        });
 
-        const card = document.createElement('div');
-        card.className = "bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-between";
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-center mb-2 pb-1.5 border-b border-slate-200">
-              <span class="font-bold text-xs text-slate-800 truncate"><i class="fa-solid fa-location-dot text-red-500 mr-1"></i>${prov}</span>
-              <span class="bg-indigo-600 text-white font-bold text-xs px-2 py-0.5 rounded-lg shadow-sm">${pData.total} คน</span>
+            <div class="text-xs space-y-1 text-slate-600">
+              <div><i class="fa-solid fa-phone text-slate-400 mr-1.5"></i> ${cells[5].innerText}</div>
+              <div><i class="fa-solid fa-building text-slate-400 mr-1.5"></i> ${cells[6].innerText}</div>
+              <div class="pt-1">${cells[7].innerHTML}</div>
             </div>
-            <div class="space-y-0.5">
-              ${districtsHtml}
+
+            <div class="pt-2 border-t flex flex-wrap gap-2 items-center justify-between text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="text-[11px] text-slate-400">คำร้อง:</span> ${cells[9].innerHTML}
+                <span class="text-[11px] text-slate-400 ml-1">ส่งตัว:</span> ${cells[10].innerHTML}
+              </div>
+              <div>
+                ${cells[12].innerHTML}
+              </div>
             </div>
           </div>
         `;
-        container.appendChild(card);
       });
+      cardsContainer.innerHTML = cardsHtml;
     }
 
-    function renderTeacherTable(data) {
-      const tbody = document.getElementById('teacherStudentTable');
-      tbody.innerHTML = '';
-      data.forEach(st => {
-        const sups = st.supervisions || {};
-        
-        let supBadgesHtml = '<div class="flex items-center justify-center space-x-1.5">';
-        [1, 2, 3].forEach(r => {
-          const sup = sups[r];
-          if(sup) {
-            supBadgesHtml += `
-              <button onclick="openSupervision('${st.studentId}', ${r})" title="ครั้งที่ ${r}: นิเทศแล้วเมื่อ ${sup.date} (${sup.channel})" 
-                class="w-7 h-7 rounded-full bg-emerald-500 text-white font-bold text-xs shadow hover:bg-emerald-600 transition flex items-center justify-center cursor-pointer">
-                ${r}
-              </button>
-            `;
-          } else {
-            supBadgesHtml += `
-              <button onclick="openSupervision('${st.studentId}', ${r})" title="ครั้งที่ ${r}: ยังไม่มีข้อมูลนิเทศ" 
-                class="w-7 h-7 rounded-full bg-slate-200 text-slate-500 font-semibold text-xs border border-slate-300 hover:bg-slate-300 transition flex items-center justify-center cursor-pointer">
-                ${r}
-              </button>
-            `;
-          }
-        });
-        supBadgesHtml += '</div>';
-
-        const hasCompanyData = st.companyName && st.companyName.trim() !== '' && st.companyName !== 'ยังไม่ระบุ';
-
-        const sendDocBtnHtml = hasCompanyData
-          ? `<button onclick="downloadDocByTeacher('${st.studentId}', 'send')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-2.5 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1 cursor-pointer">
-               <i class="fa-solid fa-file-pdf"></i> หนังสือส่งตัว
-             </button>`
-          : `<button disabled title="นักศึกษายังไม่ได้กรอกข้อมูลสถานประกอบการ" class="bg-slate-100 text-slate-400 px-2.5 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1 cursor-not-allowed opacity-60">
-               <i class="fa-solid fa-file-pdf"></i> หนังสือส่งตัว
-             </button>`;
-
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50";
-        tr.innerHTML = `
-          <td class="p-3 font-semibold">${st.studentId}</td>
-          <td class="p-3">${st.fullname}</td>
-          <td class="p-3">${st.level}</td>
-          <td class="p-3 text-xs">${st.studentNo}</td>
-          <td class="p-3"><span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded text-xs font-semibold">${st.shift}</span></td>
-          <td class="p-3 text-xs">${st.phone}</td>
-          <td class="p-3">${st.companyName}</td>
-          <td class="p-3">
-            ${st.mapUrl ? `<a href="${st.mapUrl}" target="_blank" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md text-xs font-semibold inline-flex items-center gap-1"><i class="fa-solid fa-map-location-dot"></i> ดูแผนที่</a>` : '<span class="text-slate-400 text-xs">-</span>'}
-          </td>
-          <td class="p-3 text-center">
-            ${sendDocBtnHtml}
-          </td>
-          <td class="p-3 text-center">
-            <input type="checkbox" ${st.isReqReceived ? 'checked' : ''} onchange="onDocStatusChange('${st.studentId}', 'reqReceived', this.checked)" class="w-4 h-4 text-emerald-600 rounded cursor-pointer accent-emerald-600">
-          </td>
-          <td class="p-3 text-center">
-            <input type="checkbox" ${st.isSendDocIssued ? 'checked' : ''} onchange="onDocStatusChange('${st.studentId}', 'sendDocIssued', this.checked)" class="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600">
-          </td>
-          <td class="p-3">
-            <button onclick="toggleStatus('${st.studentId}', '${st.status}')" class="px-2.5 py-1 rounded-full text-xs font-semibold ${st.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">
-              ${st.status}
-            </button>
-          </td>
-          <td class="p-3 text-center">
-            ${supBadgesHtml}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function onDocStatusChange(studentId, field, isChecked) {
-      const res = await callApi("updateDocStatus", {
-        studentId: studentId,
-        field: field,
-        value: isChecked
-      });
-      const data = res.data || res;
-
-      if (res.success || data.success) {
-        const label = field === 'reqReceived' ? 'รับคำร้อง' : 'ออกหนังสือส่งตัว';
-        showToast(`อัปเดตสถานะ "${label}" เรียบร้อยแล้ว`, true);
-        
-        const item = allStudentData.find(x => x.studentId === studentId);
-        if (item) {
-          if (field === 'reqReceived') item.isReqReceived = isChecked;
-          if (field === 'sendDocIssued') item.isSendDocIssued = isChecked;
-        }
-        loadDashboardStats();
-      } else {
-        showToast(res.error || data.message || "เกิดข้อผิดพลาดในการบันทึก", false);
+    // เพิ่มการปรับ View แบบอัตโนมัติตามขนาดหน้าจอตอนเปิดใช้งานครั้งแรก
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < 768 && currentViewMode === 'table') {
+        // Auto recommend or stay flexible
       }
-    }
-
-    function onFilterProvinceChange() {
-      const p = document.getElementById('filterProvince').value;
-      const distSelect = document.getElementById('filterDistrict');
-      
-      distSelect.innerHTML = '<option value="">-- อำเภอ/เขตทั้งหมด --</option>';
-
-      if (p && LOCATION_DATA[p]) {
-        Object.keys(LOCATION_DATA[p]).forEach(d => {
-          distSelect.add(new Option(d, d));
-        });
-      }
-
-      filterStudents();
-    }
-
-    function filterStudents() {
-      const lvl = document.getElementById('filterLevel').value;
-      const p = document.getElementById('filterProvince').value;
-      const d = document.getElementById('filterDistrict').value;
-      
-      let filtered = allStudentData;
-      if(lvl) filtered = filtered.filter(x => x.level === lvl);
-      if(p) filtered = filtered.filter(x => x.province === p);
-      if(d) filtered = filtered.filter(x => x.district === d);
-
-      renderTeacherTable(filtered);
-    }
-
-    async function toggleStatus(studentId, currentStatus) {
-      const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-      
-      const res = await callApi("updateStatus", { studentId: studentId, status: newStatus });
-      const data = res.data || res;
-
-      if (res.success || data.success) {
-        showToast(`เปลี่ยนสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
-        loadTeacherDashboard();
-      } else {
-        showToast(res.error || data.message || "เกิดข้อผิดพลาดในการเปลี่ยนสถานะ", false);
-      }
-    }
-
-    function togglePhotoUpload(chk) {
-      const box = document.getElementById('photoUploadBox');
-      const fileInput = document.getElementById('supPhotoInput');
-      if (chk.checked) {
-        box.classList.remove('hidden');
-      } else {
-        box.classList.add('hidden');
-        fileInput.value = '';
-      }
-    }
-
-    async function openSupervision(studentId, targetRound = null) {
-      document.getElementById('supStudentId').value = studentId;
-      document.getElementById('chkAttachPhoto').checked = false;
-      togglePhotoUpload({ checked: false });
-      document.getElementById('supPhotoInput').value = '';
-
-      if (targetRound) {
-        document.getElementById('supRound').value = targetRound;
-      }
-      
-      openModal('supervisionModal');
-      
-      const res = await callApi("getSupervisionHistory", { studentId: studentId });
-      const history = res.data || res;
-      const box = document.getElementById('supHistory');
-
-      box.innerHTML = (Array.isArray(history) && history.length) ? '' : '<p class="text-slate-400">ยังไม่มีประวัติการนิเทศ</p>';
-      
-      if (Array.isArray(history)) {
-        history.forEach(h => {
-          const imgHtml = h.imageUrl 
-            ? `<a href="${h.imageUrl}" target="_blank" title="คลิกเพื่อดูรูปขนาดเต็ม" class="block shrink-0">
-                 <img src="${h.imageUrl}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 shadow-sm hover:scale-105 transition transform" alt="รูปภาพนิเทศ">
-               </a>`
-            : '';
-
-          box.innerHTML += `
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-start gap-3">
-              <div class="flex-1">
-                <div class="font-bold text-slate-800">
-                  ครั้งที่ ${h.round} <span class="text-slate-400 font-normal">(${h.date})</span> 
-                  - <span class="text-indigo-600 font-semibold">${h.channel}</span>
-                </div>
-                <p class="text-slate-600 mt-1 leading-relaxed">${h.note}</p>
-              </div>
-              ${imgHtml}
-            </div>
-          `;
-        });
-      }
-    }
-
-    function saveSupervisionRecord(e) {
-      e.preventDefault();
-      
-      const btn = document.getElementById('btnSaveSup');
-      const chkPhoto = document.getElementById('chkAttachPhoto').checked;
-      const fileInput = document.getElementById('supPhotoInput');
-      
-      const payload = {
-        studentId: document.getElementById('supStudentId').value,
-        round: document.getElementById('supRound').value,
-        date: document.getElementById('supDate').value,
-        channel: document.getElementById('supChannel').value,
-        note: document.getElementById('supNote').value,
-        teacherId: currentUser ? currentUser.teacherId : '',
-        fileData: null,
-        fileName: null,
-        mimeType: null
-      };
-
-      const processAndSave = async () => {
-        btn.disabled = true;
-        btn.innerText = "กำลังบันทึกข้อมูล...";
-        
-        const res = await callApi("saveSupervision", payload);
-        const data = res.data || res;
-
-        btn.disabled = false;
-        btn.innerText = "บันทึกการนิเทศ";
-
-        if (res.success || data.success) {
-          showToast(data.message || "บันทึกผลการนิเทศเรียบร้อย", true);
-          closeModal('supervisionModal');
-          loadTeacherDashboard();
-        } else {
-          showToast(res.error || data.message || "เกิดข้อผิดพลาดในการบันทึก", false);
-        }
-      };
-
-      if (chkPhoto && fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        
-        reader.onload = function(evt) {
-          payload.fileData = evt.target.result;
-          payload.fileName = file.name;
-          payload.mimeType = file.type;
-          processAndSave();
-        };
-        
-        reader.readAsDataURL(file);
-      } else {
-        processAndSave();
-      }
-    }
-
-    // MODAL UTILS
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-    function openFormModal() { openModal('formModal'); }
+    });
   </script>
 </body>
 </html>
