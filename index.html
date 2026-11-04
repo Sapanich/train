@@ -953,41 +953,36 @@
 
     // ---------- TEACHER & ADMIN LOGIC ----------
     async function loadTeacherDashboard() {
-      document.getElementById('teacherDashboard').classList.remove('hidden');
-      
-      const isAdmin = currentUser && currentUser.role === 'admin';
-      document.getElementById('lblStatTotalTitle').innerText = isAdmin ? 'จำนวนนักศึกษาทั้งหมด' : 'จำนวนนักศึกษาที่ดูแล';
-      document.getElementById('dashboardHeading').innerText = isAdmin ? 'แผงควบคุมระบบ (Admin Dashboard)' : 'แผงควบคุมสำหรับครู / อาจารย์นิเทศ';
+  document.getElementById('teacherDashboard').classList.remove('hidden');
+  
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  document.getElementById('lblStatTotalTitle').innerText = isAdmin ? 'จำนวนนักศึกษาทั้งหมด' : 'จำนวนนักศึกษาที่ดูแล';
+  document.getElementById('dashboardHeading').innerText = isAdmin ? 'แผงควบคุมระบบ (Admin Dashboard)' : 'แผงควบคุมสำหรับครู / อาจารย์นิเทศ';
 
-      loadDashboardStats();
+  loadDashboardStats();
 
-      const res = await callApi("getAllStudents", { user: currentUser });
-      const data = res.data || res;
+  const res = await callApi("getAllStudents", { user: currentUser });
+  const data = res.data || res;
 
-      if (res.success || Array.isArray(data)) {
-        allStudentData = Array.isArray(data) ? data : (data.students || []);
-        
-        const levelSelect = document.getElementById('filterLevel');
-        levelSelect.innerHTML = '';
+  if (res.success || Array.isArray(data)) {
+    allStudentData = Array.isArray(data) ? data : (data.students || []);
+    
+    const levelSelect = document.getElementById('filterLevel');
+    levelSelect.innerHTML = '';
+    levelSelect.disabled = false;
+    levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
 
-        if (!isAdmin && currentUser.classAssigned && currentUser.classAssigned !== 'ALL') {
-          levelSelect.add(new Option(currentUser.classAssigned, currentUser.classAssigned));
-          levelSelect.value = currentUser.classAssigned;
-          levelSelect.disabled = true;
-        } else {
-          levelSelect.disabled = false;
-          levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
-          const levels = [...new Set(allStudentData.map(x => x.level).filter(x => x && x !== '-'))];
-          levels.forEach(lvl => {
-            levelSelect.add(new Option(lvl, lvl));
-          });
-        }
+    // ดึงระดับชั้นที่มีทั้งหมดในข้อมูลนักศึกษาที่โหลดมา
+    const levels = [...new Set(allStudentData.map(x => x.level).filter(x => x && x !== '-'))];
+    levels.forEach(lvl => {
+      levelSelect.add(new Option(lvl, lvl));
+    });
 
-        filterStudents();
-      } else {
-        showToast("โหลดข้อมูลล้มเหลว: " + (res.error || data.message), false);
-      }
-    }
+    filterStudents();
+  } else {
+    showToast("โหลดข้อมูลล้มเหลว: " + (res.error || data.message), false);
+  }
+}
 
     async function loadDashboardStats() {
       const res = await callApi("getDashboardStats", { user: currentUser });
