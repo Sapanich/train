@@ -1177,19 +1177,41 @@
       renderTeacherTable(filtered);
     }
 
-    async function toggleStatus(studentId, currentStatus) {
-      const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
-      
-      const res = await callApi("updateStatus", { studentId: studentId, status: newStatus });
-      const data = res.data || res;
+// ------------------- TOGGLE STUDENT STATUS -------------------
+async function toggleStatus(studentId, currentStatus) {
+  // คำนวณสถานะใหม่
+  const newStatus = (currentStatus && currentStatus.trim() === 'Active') ? 'Inactive' : 'Active';
+  const actionText = newStatus === 'Inactive' ? 'ระงับสิทธิ์ (Inactive)' : 'เปิดใช้งาน (Active)';
 
-      if (res.success || data.success) {
-        showToast(`เปลี่ยนสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
-        loadTeacherDashboard();
-      } else {
-        showToast(res.error || data.message || "เกิดข้อผิดพลาดในการเปลี่ยนสถานะ", false);
-      }
+  // แสดงกล่องข้อความยืนยันจากผู้ใช้งาน
+  const isConfirmed = confirm(`คุณต้องการเปลี่ยนสถานะของนักศึกษารหัส ${studentId} เป็น "${actionText}" ใช่หรือไม่?`);
+  if (!isConfirmed) return;
+
+  showToast("กำลังอัปเดตสถานะ...", true);
+
+  // ส่ง Payload ด้วย key `newStatus` ให้ตรงกับ Code.gs
+  const res = await callApi("updateStatus", { 
+    studentId: studentId, 
+    newStatus: newStatus 
+  });
+  
+  const data = res.data || res;
+
+  if (res.success || data.success) {
+    showToast(`อัปเดตสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
+    
+    // อัปเดตข้อมูลในหน่วยความจำฝั่ง Client ทันทีเพื่อไม่ต้องโหลดตารางใหม่ทั้งหมด
+    const student = allStudentData.find(x => String(x.studentId).trim() === String(studentId).trim());
+    if (student) {
+      student.status = newStatus;
     }
+
+    // เรนเดอร์ตารางใหม่
+    filterStudents();
+  } else {
+    showToast("เกิดข้อผิดพลาด: " + (res.error || data.message || "ไม่สามารถเปลี่ยนสถานะได้"), false);
+  }
+}
 
     function togglePhotoUpload(chk) {
       const box = document.getElementById('photoUploadBox');
