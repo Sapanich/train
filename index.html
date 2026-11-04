@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -13,14 +12,14 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen relative">
 
-  <!-- CUSTOM ALERT TOAST -->
+  <!-- CUSTOM ALERT TOAST (หน้าต่างแจ้งเตือนเหมือนภาพที่ 2) -->
   <div id="toastNotification" class="hidden fixed top-5 right-5 z-50 max-w-sm w-full bg-white rounded-2xl shadow-2xl border p-4 transition-all transform duration-300">
     <div class="flex items-center space-x-3">
       <div id="toastIcon" class="text-2xl text-emerald-500">
         <i class="fa-solid fa-circle-check"></i>
       </div>
       <div class="flex-1">
-        <h4 id="toastTitle" class="font-bold text-sm text-slate-800">แจ้งเตือนระบบ</h4>
+        <h4 id="toastTitle" class="font-bold text-sm text-slate-800">สำเร็จ</h4>
         <p id="toastMessage" class="text-xs text-slate-500 mt-0.5"></p>
       </div>
       <button onclick="hideToast()" class="text-slate-400 hover:text-slate-600">
@@ -443,7 +442,6 @@
   </div>
 
   <script>
-    // 🔗 URL ปลายทางของ Google Apps Script Web App
     const API_URL = "https://script.google.com/macros/s/AKfycby3Z5I3R6NiY0WYE3-nQMObINo48qSVIUO1GgOpEbssl6KQFR6GrB7mh9Mbq86FKybp/exec";
 
     const LOCATION_DATA = {
@@ -564,7 +562,6 @@
     let activeFormData = null;
     let isEditingProfile = false;
 
-    // 🌐 ฟังก์ชันหลักสำหรับส่ง HTTP Request ไปยัง Google Apps Script Backend
     async function callApi(action, payload = {}) {
       try {
         const token = sessionStorage.getItem("sessionToken") || "";
@@ -1177,41 +1174,31 @@
       renderTeacherTable(filtered);
     }
 
-// ------------------- TOGGLE STUDENT STATUS -------------------
-async function toggleStatus(studentId, currentStatus) {
-  // คำนวณสถานะใหม่
-  const newStatus = (currentStatus && currentStatus.trim() === 'Active') ? 'Inactive' : 'Active';
-  const actionText = newStatus === 'Inactive' ? 'ระงับสิทธิ์ (Inactive)' : 'เปิดใช้งาน (Active)';
+    // 📌 ปรับปรุงฟังก์ชันสลับสถานะ (Active <-> Inactive) ให้เปลี่ยนทันที แล้วแสดง Pop-up Toast สไตล์ภาพที่ 2
+    async function toggleStatus(studentId, currentStatus) {
+      const newStatus = (currentStatus && currentStatus.trim() === 'Active') ? 'Inactive' : 'Active';
+      
+      const res = await callApi("updateStatus", { 
+        studentId: studentId, 
+        newStatus: newStatus 
+      });
+      
+      const data = res.data || res;
 
-  // แสดงกล่องข้อความยืนยันจากผู้ใช้งาน
-  const isConfirmed = confirm(`คุณต้องการเปลี่ยนสถานะของนักศึกษารหัส ${studentId} เป็น "${actionText}" ใช่หรือไม่?`);
-  if (!isConfirmed) return;
-
-  showToast("กำลังอัปเดตสถานะ...", true);
-
-  // ส่ง Payload ด้วย key `newStatus` ให้ตรงกับ Code.gs
-  const res = await callApi("updateStatus", { 
-    studentId: studentId, 
-    newStatus: newStatus 
-  });
-  
-  const data = res.data || res;
-
-  if (res.success || data.success) {
-    showToast(`อัปเดตสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
-    
-    // อัปเดตข้อมูลในหน่วยความจำฝั่ง Client ทันทีเพื่อไม่ต้องโหลดตารางใหม่ทั้งหมด
-    const student = allStudentData.find(x => String(x.studentId).trim() === String(studentId).trim());
-    if (student) {
-      student.status = newStatus;
+      if (res.success || data.success) {
+        // เด้ง Toast Notification สไตล์รูปที่ 2 (ไอคอนเขียว)
+        showToast(`เปลี่ยนสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
+        
+        // อัปเดตข้อมูลในอาร์เรย์ local และสั่งวาดตารางใหม่ทันที
+        const student = allStudentData.find(x => String(x.studentId).trim() === String(studentId).trim());
+        if (student) {
+          student.status = newStatus;
+        }
+        filterStudents();
+      } else {
+        showToast(res.error || data.message || "เกิดข้อผิดพลาดในการเปลี่ยนสถานะ", false);
+      }
     }
-
-    // เรนเดอร์ตารางใหม่
-    filterStudents();
-  } else {
-    showToast("เกิดข้อผิดพลาด: " + (res.error || data.message || "ไม่สามารถเปลี่ยนสถานะได้"), false);
-  }
-}
 
     function togglePhotoUpload(chk) {
       const box = document.getElementById('photoUploadBox');
