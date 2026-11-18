@@ -384,7 +384,7 @@
         <button onclick="closeModal('supervisionModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
 
-      <form onsubmit="saveSupervisionRecord(event)" class="space-y-3">
+      <form id="supervisionForm" onsubmit="saveSupervisionRecord(event)" class="space-y-3">
         <input type="hidden" id="supStudentId">
         
         <div>
@@ -404,7 +404,7 @@
         <div>
           <label class="block text-xs font-medium mb-1">ช่องทางการนิเทศ</label>
           <select id="supChannel" required class="w-full px-3 py-2 border rounded-lg text-sm">
-            <option value="สถานประกอบการ">สถานประกอบการ (On-site)</option>
+            <option value="สถานประกอบการ" selected>สถานประกอบการ (On-site)</option>
             <option value="โทรศัพท์">โทรศัพท์ (Phone Call)</option>
             <option value="Video Call">Video Call</option>
           </select>
@@ -412,7 +412,7 @@
         
         <div>
           <label class="block text-xs font-medium mb-1">บันทึกผลการนิเทศ</label>
-          <textarea id="supNote" rows="3" required class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
+          <textarea id="supNote" rows="3" required placeholder="ระบุผลการนิเทศนักศึกษา..." class="w-full px-3 py-2 border rounded-lg text-sm"></textarea>
         </div>
 
         <div class="pt-2 border-t">
@@ -436,7 +436,7 @@
 
       <div class="border-t pt-3">
         <h4 class="text-xs font-bold text-slate-500 mb-2">ประวัติการนิเทศที่ผ่านมา</h4>
-        <div id="supHistory" class="space-y-2 max-h-48 overflow-y-auto text-xs"></div>
+        <div id="supHistory" class="space-y-2 max-h-60 overflow-y-auto text-xs"></div>
       </div>
     </div>
   </div>
@@ -689,7 +689,6 @@
     function fillStudentFormModal(st) {
       activeFormData = st;
 
-      // รีเซ็ตสถานะหน้าต่างให้อยู่ในโหมดกรอกฟอร์มและโหมดดูข้อมูลพื้นฐานเริ่มต้น
       isEditingProfile = false;
       document.getElementById('profileViewMode').classList.remove('hidden');
       document.getElementById('profileEditMode').classList.add('hidden');
@@ -701,7 +700,6 @@
       document.getElementById('previewSection').classList.add('hidden');
       document.getElementById('chkFixDate').checked = false;
 
-      // ข้อมูลพื้นฐาน (โหมดดู)
       document.getElementById('stIdView').innerText = st.studentId || '';
       document.getElementById('stNameView').innerText = (st.prefix || '') + (st.fullname || '');
       document.getElementById('stLevelView').innerText = st.level || '';
@@ -712,7 +710,6 @@
       document.getElementById('stEmailView').innerText = st.email || '-';
       document.getElementById('stAdvisorView').innerText = st.advisor || '-';
 
-      // ข้อมูลพื้นฐาน (โหมดแก้ไข)
       document.getElementById('editPrefix').value = st.prefix || '';
       document.getElementById('editFullname').value = st.fullname || '';
       document.getElementById('editLevel').value = st.level || '';
@@ -723,7 +720,6 @@
       document.getElementById('editEmail').value = st.email || '';
       document.getElementById('editAdvisor').value = st.advisor || '';
 
-      // ข้อมูลสถานประกอบการและระยะเวลาฝึกงาน
       document.getElementById('startDate').value = st.startDate || '';
       document.getElementById('endDate').value = st.endDate || '';
       document.getElementById('companyName').value = st.companyName || '';
@@ -735,7 +731,6 @@
       document.getElementById('coordinatorPos').value = st.coordinatorPos || '';
       document.getElementById('coordinatorPhone').value = st.coordinatorPhone || '';
 
-      // รีเซ็ตและเติมข้อมูล จังหวัด / เขต-อำเภอ / แขวง-ตำบล
       document.getElementById('province').value = '';
       document.getElementById('district').innerHTML = '<option value="">-- เลือกเขต/อำเภอ --</option>';
       document.getElementById('subdistrict').innerHTML = '<option value="">-- เลือกแขวง/ตำบล --</option>';
@@ -1270,29 +1265,58 @@
       }
     }
 
+    // แปลง URL รูปภาพจาก Google Drive ให้แสดงผล Thumbnail และคลิกเปิดดูภาพเต็มได้
+    function formatDriveImageUrls(url) {
+      if (!url) return null;
+      const cleanUrl = String(url).trim();
+      const idMatch = cleanUrl.match(/[-\w]{25,}/);
+      if (idMatch && (cleanUrl.includes('drive.google.com') || cleanUrl.includes('googleusercontent.com'))) {
+        const fileId = idMatch[0];
+        return {
+          thumbUrl: `https://lh3.googleusercontent.com/d/${fileId}`,
+          fallbackUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w600`,
+          viewUrl: `https://drive.google.com/file/d/${fileId}/view`
+        };
+      }
+      return { thumbUrl: cleanUrl, fallbackUrl: cleanUrl, viewUrl: cleanUrl };
+    }
+
     async function openSupervision(studentId, targetRound = null) {
+      // เคลียร์ข้อมูลฟอร์มนิเทศทั้งหมดให้พร้อมกรอกรายการใหม่
+      const supForm = document.getElementById('supervisionForm');
+      if (supForm) supForm.reset();
+
       document.getElementById('supStudentId').value = studentId;
+      document.getElementById('supDate').value = '';
+      document.getElementById('supChannel').value = 'สถานประกอบการ';
+      document.getElementById('supNote').value = '';
       document.getElementById('chkAttachPhoto').checked = false;
       togglePhotoUpload({ checked: false });
       document.getElementById('supPhotoInput').value = '';
 
       if (targetRound) {
-        document.getElementById('supRound').value = targetRound;
+        document.getElementById('supRound').value = String(targetRound);
+      } else {
+        document.getElementById('supRound').value = '1';
       }
       
+      const box = document.getElementById('supHistory');
+      box.innerHTML = '<p class="text-slate-400">กำลังโหลดประวัติการนิเทศ...</p>';
+
       openModal('supervisionModal');
       
       const res = await callApi("getSupervisionHistory", { studentId: studentId });
       const history = res.data || res;
-      const box = document.getElementById('supHistory');
 
       box.innerHTML = (Array.isArray(history) && history.length) ? '' : '<p class="text-slate-400">ยังไม่มีประวัติการนิเทศ</p>';
       
       if (Array.isArray(history)) {
         history.forEach(h => {
-          const imgHtml = h.imageUrl 
-            ? `<a href="${h.imageUrl}" target="_blank" title="คลิกเพื่อดูรูปขนาดเต็ม" class="block shrink-0">
-                 <img src="${h.imageUrl}" class="w-16 h-16 object-cover rounded-lg border border-slate-200 shadow-sm hover:scale-105 transition transform" alt="รูปภาพนิเทศ">
+          const imgInfo = formatDriveImageUrls(h.imageUrl);
+          const imgHtml = imgInfo 
+            ? `<a href="${imgInfo.viewUrl}" target="_blank" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="block shrink-0 group">
+                 <img src="${imgInfo.thumbUrl}" onerror="this.onerror=null;this.src='${imgInfo.fallbackUrl}';" class="w-20 h-20 object-cover rounded-lg border border-slate-200 shadow-sm group-hover:scale-105 transition transform" alt="รูปภาพนิเทศ">
+                 <span class="block text-[10px] text-center text-indigo-600 font-semibold mt-1 group-hover:underline"><i class="fa-solid fa-magnifying-glass-plus mr-0.5"></i>ดูรูปเต็ม</span>
                </a>`
             : '';
 
