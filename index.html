@@ -12,7 +12,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen relative">
 
-  <!-- CUSTOM ALERT TOAST (หน้าต่างแจ้งเตือนเหมือนภาพที่ 2) -->
+  <!-- CUSTOM ALERT TOAST -->
   <div id="toastNotification" class="hidden fixed top-5 right-5 z-50 max-w-sm w-full bg-white rounded-2xl shadow-2xl border p-4 transition-all transform duration-300">
     <div class="flex items-center space-x-3">
       <div id="toastIcon" class="text-2xl text-emerald-500">
@@ -170,7 +170,7 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border">
         <div>
           <h2 id="dashboardHeading" class="text-xl font-bold text-slate-800">แผงควบคุมสำหรับครู / อาจารย์นิเทศ</h2>
-          <p class="text-xs text-slate-500">จัดการสถานะ จัดโซนนิ่ง และบันทึกผลการนิเทศนักศึกษา</p>
+          <p class="text-xs text-slate-500">จัดการสถานะ จัดโซนนิ่ง และบันทึกผลการนิเทศนักศึกษา (คลิกที่รหัสนักศึกษาเพื่อแก้ไขข้อมูลคำร้อง)</p>
         </div>
         <div class="flex flex-wrap gap-2 w-full md:w-auto">
           <select id="filterLevel" onchange="filterStudents()" class="px-3 py-1.5 border rounded-lg text-sm bg-slate-50 font-semibold">
@@ -216,7 +216,7 @@
   <div id="formModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center pb-4 border-b">
-        <h3 class="text-lg font-bold text-slate-800">กรอกข้อมูลคำร้องหนังสือถึงสถานประกอบการ</h3>
+        <h3 id="formModalTitle" class="text-lg font-bold text-slate-800">กรอกข้อมูลคำร้องหนังสือถึงสถานประกอบการ</h3>
         <button onclick="closeModal('formModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
 
@@ -685,6 +685,95 @@
       showToast("ออกจากระบบเรียบร้อยแล้ว", true);
     }
 
+    // ---------- ฟังก์ชันเติมข้อมูลลง Modal คำร้อง (ใช้ร่วมกันทั้ง Student และ Teacher) ----------
+    function fillStudentFormModal(st) {
+      activeFormData = st;
+
+      // รีเซ็ตสถานะหน้าต่างให้อยู่ในโหมดกรอกฟอร์มและโหมดดูข้อมูลพื้นฐานเริ่มต้น
+      isEditingProfile = false;
+      document.getElementById('profileViewMode').classList.remove('hidden');
+      document.getElementById('profileEditMode').classList.add('hidden');
+      const btnEditProf = document.getElementById('btnToggleEditProfile');
+      btnEditProf.innerHTML = '<i class="fa-solid fa-pen-to-square mr-1"></i> แก้ไขข้อมูลส่วนตัว';
+      btnEditProf.className = "text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg border border-amber-300 font-semibold transition";
+
+      document.getElementById('stReqForm').classList.remove('hidden');
+      document.getElementById('previewSection').classList.add('hidden');
+      document.getElementById('chkFixDate').checked = false;
+
+      // ข้อมูลพื้นฐาน (โหมดดู)
+      document.getElementById('stIdView').innerText = st.studentId || '';
+      document.getElementById('stNameView').innerText = (st.prefix || '') + (st.fullname || '');
+      document.getElementById('stLevelView').innerText = st.level || '';
+      document.getElementById('stDeptView').innerText = st.department || '';
+      document.getElementById('stNoView').innerText = st.studentNo || '-';
+      document.getElementById('stShiftView').innerText = st.shift || '-';
+      document.getElementById('stPhoneView').innerText = st.phone || '-';
+      document.getElementById('stEmailView').innerText = st.email || '-';
+      document.getElementById('stAdvisorView').innerText = st.advisor || '-';
+
+      // ข้อมูลพื้นฐาน (โหมดแก้ไข)
+      document.getElementById('editPrefix').value = st.prefix || '';
+      document.getElementById('editFullname').value = st.fullname || '';
+      document.getElementById('editLevel').value = st.level || '';
+      document.getElementById('editDept').value = st.department || '';
+      document.getElementById('editNo').value = st.studentNo || '';
+      document.getElementById('editShift').value = st.shift || '';
+      document.getElementById('editPhone').value = st.phone || '';
+      document.getElementById('editEmail').value = st.email || '';
+      document.getElementById('editAdvisor').value = st.advisor || '';
+
+      // ข้อมูลสถานประกอบการและระยะเวลาฝึกงาน
+      document.getElementById('startDate').value = st.startDate || '';
+      document.getElementById('endDate').value = st.endDate || '';
+      document.getElementById('companyName').value = st.companyName || '';
+      document.getElementById('toPerson').value = st.toPerson || '';
+      document.getElementById('address').value = st.address || '';
+      document.getElementById('companyPhone').value = st.companyPhone || '';
+      document.getElementById('zipcode').value = st.zipcode || '';
+      document.getElementById('coordinatorName').value = st.coordinatorName || '';
+      document.getElementById('coordinatorPos').value = st.coordinatorPos || '';
+      document.getElementById('coordinatorPhone').value = st.coordinatorPhone || '';
+
+      // รีเซ็ตและเติมข้อมูล จังหวัด / เขต-อำเภอ / แขวง-ตำบล
+      document.getElementById('province').value = '';
+      document.getElementById('district').innerHTML = '<option value="">-- เลือกเขต/อำเภอ --</option>';
+      document.getElementById('subdistrict').innerHTML = '<option value="">-- เลือกแขวง/ตำบล --</option>';
+
+      const provVal = String(st.province || '').trim();
+      const distVal = String(st.district || '').trim();
+      const subVal = String(st.subdistrict || '').trim();
+
+      if (provVal) {
+        document.getElementById('province').value = provVal;
+        onProvinceChange();
+        if (distVal) {
+          document.getElementById('district').value = distVal;
+          onDistrictChange();
+          if (subVal) {
+            document.getElementById('subdistrict').value = subVal;
+          }
+        }
+      }
+    }
+
+    // ---------- เปิดหน้าต่างจัดการคำร้องเมื่อครูคลิกที่รหัสนักศึกษา ----------
+    async function openStudentFormByTeacher(studentId) {
+      showToast("กำลังโหลดข้อมูลนักศึกษา...", true);
+
+      const res = await callApi("getStudentData", { studentId: studentId });
+      const st = res.data || res;
+
+      if (!res.success || !st || !st.studentId) {
+        showToast(res.error || "ไม่พบข้อมูลนักศึกษาในระบบ", false);
+        return;
+      }
+
+      document.getElementById('formModalTitle').innerText = `จัดการข้อมูลคำร้องนักศึกษา (รหัส ${st.studentId})`;
+      fillStudentFormModal(st);
+      openModal('formModal');
+    }
+
     // ---------- STUDENT LOGIC ----------
     async function loadStudentDashboard(studentId) {
       const res = await callApi("getStudentData", { studentId: studentId });
@@ -695,7 +784,8 @@
         return;
       }
 
-      activeFormData = st;
+      document.getElementById('formModalTitle').innerText = "กรอกข้อมูลคำร้องหนังสือถึงสถานประกอบการ";
+      fillStudentFormModal(st);
       document.getElementById('studentDashboard').classList.remove('hidden');
       
       const alertBox = document.getElementById('statusAlert');
@@ -716,45 +806,6 @@
         btnForm.disabled = false;
         btnForm.onclick = openFormModal;
         btnForm.className = "w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-2 rounded-lg text-sm transition";
-      }
-
-      document.getElementById('stIdView').innerText = st.studentId || '';
-      document.getElementById('stNameView').innerText = (st.prefix || '') + (st.fullname || '');
-      document.getElementById('stLevelView').innerText = st.level || '';
-      document.getElementById('stDeptView').innerText = st.department || '';
-      document.getElementById('stNoView').innerText = st.studentNo || '-';
-      document.getElementById('stShiftView').innerText = st.shift || '-';
-      document.getElementById('stPhoneView').innerText = st.phone || '-';
-      document.getElementById('stEmailView').innerText = st.email || '-';
-      document.getElementById('stAdvisorView').innerText = st.advisor || '-';
-
-      document.getElementById('editPrefix').value = st.prefix || '';
-      document.getElementById('editFullname').value = st.fullname || '';
-      document.getElementById('editLevel').value = st.level || '';
-      document.getElementById('editDept').value = st.department || '';
-      document.getElementById('editNo').value = st.studentNo || '';
-      document.getElementById('editShift').value = st.shift || '';
-      document.getElementById('editPhone').value = st.phone || '';
-      document.getElementById('editEmail').value = st.email || '';
-      document.getElementById('editAdvisor').value = st.advisor || '';
-
-      document.getElementById('startDate').value = st.startDate || '';
-      document.getElementById('endDate').value = st.endDate || '';
-      document.getElementById('companyName').value = st.companyName || '';
-      document.getElementById('toPerson').value = st.toPerson || '';
-      document.getElementById('address').value = st.address || '';
-      document.getElementById('companyPhone').value = st.companyPhone || '';
-      document.getElementById('zipcode').value = st.zipcode || '';
-      document.getElementById('coordinatorName').value = st.coordinatorName || '';
-      document.getElementById('coordinatorPos').value = st.coordinatorPos || '';
-      document.getElementById('coordinatorPhone').value = st.coordinatorPhone || '';
-
-      if (st.province) {
-        document.getElementById('province').value = st.province;
-        onProvinceChange();
-        document.getElementById('district').value = st.district;
-        onDistrictChange();
-        document.getElementById('subdistrict').value = st.subdistrict;
       }
     }
 
@@ -863,8 +914,10 @@
     }
 
     async function submitForm() {
+      const targetStudentId = activeFormData ? activeFormData.studentId : currentUser.studentId;
+
       const payload = {
-        studentId: currentUser.studentId,
+        studentId: targetStudentId,
         prefix: isEditingProfile ? document.getElementById('editPrefix').value : activeFormData.prefix,
         fullname: isEditingProfile ? document.getElementById('editFullname').value : activeFormData.fullname,
         level: isEditingProfile ? document.getElementById('editLevel').value : activeFormData.level,
@@ -897,7 +950,12 @@
         showToast(data.message || "บันทึกข้อมูลคำร้องเรียบร้อยแล้ว", true);
         closeModal('formModal');
         editForm();
-        loadStudentDashboard(currentUser.studentId);
+
+        if (currentUser && currentUser.role === 'student') {
+          loadStudentDashboard(currentUser.studentId);
+        } else {
+          loadTeacherDashboard();
+        }
       } else {
         showToast("บันทึกไม่สำเร็จ: " + (res.error || data.message), false);
       }
@@ -953,36 +1011,40 @@
 
     // ---------- TEACHER & ADMIN LOGIC ----------
     async function loadTeacherDashboard() {
-  document.getElementById('teacherDashboard').classList.remove('hidden');
-  
-  const isAdmin = currentUser && currentUser.role === 'admin';
-  document.getElementById('lblStatTotalTitle').innerText = isAdmin ? 'จำนวนนักศึกษาทั้งหมด' : 'จำนวนนักศึกษาที่ดูแล';
-  document.getElementById('dashboardHeading').innerText = isAdmin ? 'แผงควบคุมระบบ (Admin Dashboard)' : 'แผงควบคุมสำหรับครู / อาจารย์นิเทศ';
+      document.getElementById('teacherDashboard').classList.remove('hidden');
+      
+      const isAdmin = currentUser && currentUser.role === 'admin';
+      document.getElementById('lblStatTotalTitle').innerText = isAdmin ? 'จำนวนนักศึกษาทั้งหมด' : 'จำนวนนักศึกษาที่ดูแล';
+      document.getElementById('dashboardHeading').innerText = isAdmin ? 'แผงควบคุมระบบ (Admin Dashboard)' : 'แผงควบคุมสำหรับครู / อาจารย์นิเทศ';
 
-  loadDashboardStats();
+      loadDashboardStats();
 
-  const res = await callApi("getAllStudents", { user: currentUser });
-  const data = res.data || res;
+      const res = await callApi("getAllStudents", { user: currentUser });
+      const data = res.data || res;
 
-  if (res.success || Array.isArray(data)) {
-    allStudentData = Array.isArray(data) ? data : (data.students || []);
-    
-    const levelSelect = document.getElementById('filterLevel');
-    levelSelect.innerHTML = '';
-    levelSelect.disabled = false;
-    levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
+      if (res.success || Array.isArray(data)) {
+        allStudentData = Array.isArray(data) ? data : (data.students || []);
+        
+        const levelSelect = document.getElementById('filterLevel');
+        const currentSelectedLevel = levelSelect.value;
+        levelSelect.innerHTML = '';
+        levelSelect.disabled = false;
+        levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
 
-    // ดึงระดับชั้นที่มีทั้งหมดในข้อมูลนักศึกษาที่โหลดมา
-    const levels = [...new Set(allStudentData.map(x => x.level).filter(x => x && x !== '-'))];
-    levels.forEach(lvl => {
-      levelSelect.add(new Option(lvl, lvl));
-    });
+        const levels = [...new Set(allStudentData.map(x => x.level).filter(x => x && x !== '-'))];
+        levels.forEach(lvl => {
+          levelSelect.add(new Option(lvl, lvl));
+        });
 
-    filterStudents();
-  } else {
-    showToast("โหลดข้อมูลล้มเหลว: " + (res.error || data.message), false);
-  }
-}
+        if (currentSelectedLevel && levels.includes(currentSelectedLevel)) {
+          levelSelect.value = currentSelectedLevel;
+        }
+
+        filterStudents();
+      } else {
+        showToast("โหลดข้อมูลล้มเหลว: " + (res.error || data.message), false);
+      }
+    }
 
     async function loadDashboardStats() {
       const res = await callApi("getDashboardStats", { user: currentUser });
@@ -1086,7 +1148,12 @@
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50";
         tr.innerHTML = `
-          <td class="p-3 font-semibold">${st.studentId}</td>
+          <td class="p-3 font-semibold">
+            <button type="button" onclick="openStudentFormByTeacher('${st.studentId}')" title="คลิกเพื่อดู/แก้ไขข้อมูลคำร้องของนักศึกษา" class="text-indigo-600 hover:text-indigo-800 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer">
+              <span>${st.studentId}</span>
+              <i class="fa-solid fa-pen-to-square text-[11px] opacity-75"></i>
+            </button>
+          </td>
           <td class="p-3">${st.fullname}</td>
           <td class="p-3">${st.level}</td>
           <td class="p-3 text-xs">${st.studentNo}</td>
@@ -1169,7 +1236,6 @@
       renderTeacherTable(filtered);
     }
 
-    // 📌 ปรับปรุงฟังก์ชันสลับสถานะ (Active <-> Inactive) ให้เปลี่ยนทันที แล้วแสดง Pop-up Toast สไตล์ภาพที่ 2
     async function toggleStatus(studentId, currentStatus) {
       const newStatus = (currentStatus && currentStatus.trim() === 'Active') ? 'Inactive' : 'Active';
       
@@ -1181,10 +1247,8 @@
       const data = res.data || res;
 
       if (res.success || data.success) {
-        // เด้ง Toast Notification สไตล์รูปที่ 2 (ไอคอนเขียว)
         showToast(`เปลี่ยนสถานะเป็น ${newStatus} เรียบร้อยแล้ว`, true);
         
-        // อัปเดตข้อมูลในอาร์เรย์ local และสั่งวาดตารางใหม่ทันที
         const student = allStudentData.find(x => String(x.studentId).trim() === String(studentId).trim());
         if (student) {
           student.status = newStatus;
