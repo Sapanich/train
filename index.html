@@ -35,8 +35,8 @@
         <i class="fa-solid fa-graduation-cap text-2xl text-yellow-300"></i>
         <span class="font-bold text-lg md:text-xl">ระบบจัดการข้อมูลการฝึกงานนักศึกษา -SAHAPANICH-</span>
       </div>
-      <div id="userInfo" class="hidden flex items-center space-x-4">
-        <span id="userBadge" class="text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
+      <div id="userInfo" class="hidden flex items-center space-x-3 md:space-x-4">
+        <span id="userBadge" class="text-xs md:text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
         <button onclick="logout()" class="text-xs md:text-sm bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-lg transition shadow-sm">
           <i class="fa-solid fa-right-from-bracket mr-1"></i> ออกจากระบบ
         </button>
@@ -103,113 +103,217 @@
     <!-- TEACHER DASHBOARD -->
     <div id="teacherDashboard" class="hidden space-y-6">
       
-      <!-- DASHBOARD STATS SECTION -->
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between">
-            <span id="lblStatTotalTitle" class="text-xs font-bold text-slate-500">นักศึกษาทั้งหมด</span>
-            <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i class="fa-solid fa-users"></i></div>
-          </div>
-          <div id="statTotalStudents" class="text-2xl font-bold text-slate-800 mt-2">0</div>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">กรอกข้อมูลคำร้อง</span>
-            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm"><i class="fa-solid fa-pen-to-square"></i></div>
-          </div>
-          <div id="statHasReqInfo" class="text-2xl font-bold text-amber-600 mt-2">0 / 0</div>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">รับเอกสารคำร้อง</span>
-            <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="fa-solid fa-file-circle-check"></i></div>
-          </div>
-          <div id="statReqReceived" class="text-2xl font-bold text-emerald-600 mt-2">0 / 0</div>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">ออกหนังสือส่งตัว</span>
-            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="fa-solid fa-paper-plane"></i></div>
-          </div>
-          <div id="statSendDocIssued" class="text-2xl font-bold text-blue-600 mt-2">0 / 0</div>
-        </div>
-
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">สถานะการนิเทศ</span>
-            <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-user-check"></i></div>
-          </div>
-          <div id="statSupervision" class="text-xs font-semibold text-slate-700 mt-2 space-y-1">
-            <div>ครั้งที่ 1: <b id="supR1" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
-            <div>ครั้งที่ 2: <b id="supR2" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
-            <div>ครั้งที่ 3: <b id="supR3" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
-          </div>
-        </div>
+      <!-- แถบเมนูหลักของครู -->
+      <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap gap-2">
+        <button type="button" id="menuTeacherOverview" onclick="switchTeacherMenu('overview')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-table-list"></i>
+          <span>แผงควบคุมหลัก / จัดการคำร้อง</span>
+        </button>
+        <button type="button" id="menuTeacherSupervision" onclick="switchTeacherMenu('supervision')" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span>จัดการการนิเทศ</span>
+        </button>
       </div>
 
-      <!-- SECTION สรุปข้อมูลพื้นที่การฝึกงาน -->
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mt-4">
-        <div class="flex items-center justify-between mb-3 border-b pb-2">
-          <div class="flex items-center space-x-2">
-            <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm">
-              <i class="fa-solid fa-map-location-dot"></i>
+      <!-- SECTION 1: แผงควบคุมหลัก / จัดการคำร้อง -->
+      <div id="teacherOverviewSection" class="space-y-6">
+        <!-- DASHBOARD STATS SECTION -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span id="lblStatTotalTitle" class="text-xs font-bold text-slate-500">นักศึกษาทั้งหมด</span>
+              <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i class="fa-solid fa-users"></i></div>
             </div>
-            <h3 class="font-bold text-slate-800 text-sm">สรุปพื้นที่สถานประกอบการ (โซนนิ่งการฝึกงาน)</h3>
+            <div id="statTotalStudents" class="text-2xl font-bold text-slate-800 mt-2">0</div>
           </div>
-          <span class="text-xs text-slate-400">* แสดงจำนวนนักศึกษาจำแนกตามจังหวัดและเขต/อำเภอ</span>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-500">กรอกข้อมูลคำร้อง</span>
+              <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm"><i class="fa-solid fa-pen-to-square"></i></div>
+            </div>
+            <div id="statHasReqInfo" class="text-2xl font-bold text-amber-600 mt-2">0 / 0</div>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-500">รับเอกสารคำร้อง</span>
+              <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm"><i class="fa-solid fa-file-circle-check"></i></div>
+            </div>
+            <div id="statReqReceived" class="text-2xl font-bold text-emerald-600 mt-2">0 / 0</div>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-500">ออกหนังสือส่งตัว</span>
+              <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="fa-solid fa-paper-plane"></i></div>
+            </div>
+            <div id="statSendDocIssued" class="text-2xl font-bold text-blue-600 mt-2">0 / 0</div>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-500">สถานะการนิเทศ</span>
+              <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+            <div id="statSupervision" class="text-xs font-semibold text-slate-700 mt-2 space-y-1">
+              <div>ครั้งที่ 1: <b id="supR1" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
+              <div>ครั้งที่ 2: <b id="supR2" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
+              <div>ครั้งที่ 3: <b id="supR3" class="text-purple-700">0</b> / <span class="lblTotalSt">0</span></div>
+            </div>
+          </div>
         </div>
-        
-        <div id="locationStatsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-64 overflow-y-auto pr-1">
-          <div class="text-xs text-slate-400">กำลังโหลดข้อมูลพื้นที่...</div>
+
+        <!-- SECTION สรุปข้อมูลพื้นที่การฝึกงาน -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between mb-3 border-b pb-2">
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-map-location-dot"></i>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm">สรุปพื้นที่สถานประกอบการ (โซนนิ่งการฝึกงาน)</h3>
+            </div>
+            <span class="text-xs text-slate-400">* แสดงจำนวนนักศึกษาจำแนกตามจังหวัดและเขต/อำเภอ</span>
+          </div>
+          
+          <div id="locationStatsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-64 overflow-y-auto pr-1">
+            <div class="text-xs text-slate-400">กำลังโหลดข้อมูลพื้นที่...</div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border">
+          <div>
+            <h2 id="dashboardHeading" class="text-xl font-bold text-slate-800">แผงควบคุมสำหรับครู / อาจารย์นิเทศ</h2>
+            <p class="text-xs text-slate-500">จัดการสถานะ จัดโซนนิ่ง และบันทึกผลการนิเทศนักศึกษา (คลิกที่รหัสนักศึกษาเพื่อแก้ไขข้อมูลคำร้อง)</p>
+          </div>
+          <div class="flex flex-wrap gap-2 w-full md:w-auto">
+            <select id="filterLevel" onchange="filterStudents()" class="px-3 py-1.5 border rounded-lg text-sm bg-slate-50 font-semibold">
+              <option value="">-- ระดับชั้นทั้งหมด --</option>
+            </select>
+            <select id="filterProvince" onchange="onFilterProvinceChange()" class="px-3 py-1.5 border rounded-lg text-sm">
+              <option value="">-- จังหวัดทั้งหมด --</option>
+            </select>
+            <select id="filterDistrict" onchange="filterStudents()" class="px-3 py-1.5 border rounded-lg text-sm">
+              <option value="">-- อำเภอ/เขตทั้งหมด --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Student Table -->
+        <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead class="bg-slate-100 text-slate-600 border-b">
+              <tr>
+                <th class="p-3">รหัส</th>
+                <th class="p-3">ชื่อ-นามสกุล</th>
+                <th class="p-3">ระดับชั้น</th>
+                <th class="p-3">เลขที่</th>
+                <th class="p-3">รอบ</th>
+                <th class="p-3">เบอร์โทร</th>
+                <th class="p-3">สถานประกอบการ</th>
+                <th class="p-3">แผนที่ Map</th>
+                <th class="p-3 text-center">หนังสือส่งตัว</th>
+                <th class="p-3 text-center">รับคำร้อง</th>
+                <th class="p-3 text-center">ออกหนังสือส่งตัว</th>
+                <th class="p-3">สถานะ</th>
+                <th class="p-3 text-center">สถานะนิเทศ</th>
+              </tr>
+            </thead>
+            <tbody id="teacherStudentTable" class="divide-y"></tbody>
+          </table>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border">
-        <div>
-          <h2 id="dashboardHeading" class="text-xl font-bold text-slate-800">แผงควบคุมสำหรับครู / อาจารย์นิเทศ</h2>
-          <p class="text-xs text-slate-500">จัดการสถานะ จัดโซนนิ่ง และบันทึกผลการนิเทศนักศึกษา (คลิกที่รหัสนักศึกษาเพื่อแก้ไขข้อมูลคำร้อง)</p>
+      <!-- SECTION 2: จัดการการนิเทศ (แสดง Card นักศึกษาและแถบรายงานสถานะการนิเทศ) -->
+      <div id="teacherSupervisionSection" class="hidden space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-indigo-600"></i>
+              <span>จัดการการนิเทศนักศึกษา</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">คลิกที่แถบรายงานสถานะการนิเทศบนการ์ดนักศึกษาเพื่อดูรายงานผลการนิเทศ รูปภาพ หรือบันทึกการนิเทศเพิ่มเติม</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            <div class="relative flex-1 sm:flex-none sm:w-56">
+              <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="supSearchInput" oninput="renderSupervisionCards()" placeholder="ค้นหารหัส / ชื่อ-นามสกุล..." class="w-full pl-8 pr-3 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <select id="supFilterLevel" onchange="renderSupervisionCards()" class="px-3 py-1.5 border rounded-lg text-sm bg-slate-50 font-semibold">
+              <option value="">-- ระดับชั้นทั้งหมด --</option>
+            </select>
+            <select id="supFilterStatus" onchange="renderSupervisionCards()" class="px-3 py-1.5 border rounded-lg text-sm">
+              <option value="">-- สถานะการนิเทศทั้งหมด --</option>
+              <option value="none">ยังไม่นิเทศ (0/3)</option>
+              <option value="partial">นิเทศแล้วบางส่วน (1-2/3)</option>
+              <option value="complete">นิเทศครบ 3 ครั้ง (3/3)</option>
+            </select>
+          </div>
         </div>
-        <div class="flex flex-wrap gap-2 w-full md:w-auto">
-          <select id="filterLevel" onchange="filterStudents()" class="px-3 py-1.5 border rounded-lg text-sm bg-slate-50 font-semibold">
-            <option value="">-- ระดับชั้นทั้งหมด --</option>
-          </select>
-          <select id="filterProvince" onchange="onFilterProvinceChange()" class="px-3 py-1.5 border rounded-lg text-sm">
-            <option value="">-- จังหวัดทั้งหมด --</option>
-          </select>
-          <select id="filterDistrict" onchange="filterStudents()" class="px-3 py-1.5 border rounded-lg text-sm">
-            <option value="">-- อำเภอ/เขตทั้งหมด --</option>
-          </select>
-        </div>
+
+        <!-- Grid แสดง Card นักศึกษา -->
+        <div id="supervisionCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
 
-      <!-- Student Table -->
-      <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead class="bg-slate-100 text-slate-600 border-b">
-            <tr>
-              <th class="p-3">รหัส</th>
-              <th class="p-3">ชื่อ-นามสกุล</th>
-              <th class="p-3">ระดับชั้น</th>
-              <th class="p-3">เลขที่</th>
-              <th class="p-3">รอบ</th>
-              <th class="p-3">เบอร์โทร</th>
-              <th class="p-3">สถานประกอบการ</th>
-              <th class="p-3">แผนที่ Map</th>
-              <th class="p-3 text-center">หนังสือส่งตัว</th>
-              <th class="p-3 text-center">รับคำร้อง</th>
-              <th class="p-3 text-center">ออกหนังสือส่งตัว</th>
-              <th class="p-3">สถานะ</th>
-              <th class="p-3 text-center">สถานะนิเทศ</th>
-            </tr>
-          </thead>
-          <tbody id="teacherStudentTable" class="divide-y"></tbody>
-        </table>
-      </div>
     </div>
 
+  </div>
+
+  <!-- MODAL: SUPERVISION REPORT & PHOTOS (หน้าต่างรายงานสถานะการนิเทศรายบุคคล) -->
+  <div id="supervisionReportModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-5">
+      <div class="flex justify-between items-start pb-4 border-b">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full mb-1">
+            <i class="fa-solid fa-clipboard-list"></i> รายงานสถานะการนิเทศนักศึกษา
+          </span>
+          <h3 id="repStudentTitle" class="text-lg font-bold text-slate-800 mt-1">-</h3>
+          <p id="repStudentSub" class="text-xs text-slate-500 mt-0.5">-</p>
+        </div>
+        <button onclick="closeModal('supervisionReportModal')" class="text-slate-400 hover:text-slate-600 p-1">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <!-- สรุปแถบความคืบหน้าใน Modal -->
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+          <span class="text-slate-600">ความคืบหน้าการออกนิเทศ</span>
+          <span id="repProgressText" class="text-indigo-700">0 / 3 ครั้ง</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+          <div id="repProgressBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- รายการรายงานทั้ง 3 ครั้ง -->
+      <div id="repRoundsContainer" class="space-y-4"></div>
+
+      <div class="pt-3 border-t flex justify-end">
+        <button type="button" onclick="closeModal('supervisionReportModal')" class="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: IMAGE LIGHTBOX (ขยายดูรูปภาพขนาดเต็ม) -->
+  <div id="imageLightboxModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4" onclick="closeModal('imageLightboxModal')">
+    <div class="relative max-w-4xl w-full flex flex-col items-center" onclick="event.stopPropagation()">
+      <div class="w-full flex justify-between items-center text-white mb-3">
+        <span id="lightboxCaption" class="text-sm font-semibold">ภาพถ่ายการนิเทศ</span>
+        <div class="flex items-center gap-3">
+          <a id="lightboxExternalLink" href="#" target="_blank" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition">
+            <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> เปิดในแท็บใหม่
+          </a>
+          <button onclick="closeModal('imageLightboxModal')" class="text-white hover:text-slate-300 text-2xl leading-none">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <img id="lightboxImage" src="" alt="ภาพถ่ายการนิเทศ" class="max-h-[80vh] w-auto rounded-xl shadow-2xl border border-white/20 object-contain bg-slate-900">
+    </div>
   </div>
 
   <!-- MODAL: FORM ENTRY -->
@@ -377,7 +481,7 @@
   </div>
 
   <!-- MODAL: TEACHER SUPERVISION RECORD -->
-  <div id="supervisionModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div id="supervisionModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center pb-2 border-b">
         <h3 class="text-lg font-bold text-slate-800">บันทึกการออกนิเทศนักศึกษา</h3>
@@ -561,6 +665,7 @@
     let allStudentData = [];
     let activeFormData = null;
     let isEditingProfile = false;
+    let currentReportStudentId = null;
 
     async function callApi(action, payload = {}) {
       try {
@@ -660,6 +765,7 @@
         if (data.role === 'student') {
           loadStudentDashboard(data.studentId);
         } else {
+          switchTeacherMenu('overview');
           loadTeacherDashboard();
         }
         showToast("เข้าสู่ระบบเรียบร้อยแล้ว", true);
@@ -672,6 +778,7 @@
       currentUser = null;
       allStudentData = [];
       activeFormData = null;
+      currentReportStudentId = null;
       sessionStorage.removeItem("sessionToken");
 
       document.getElementById('username').value = '';
@@ -683,6 +790,27 @@
       
       switchLoginTab('student');
       showToast("ออกจากระบบเรียบร้อยแล้ว", true);
+    }
+
+    // ---------- สลับเมนูหน้าแผงควบคุมของครู ----------
+    function switchTeacherMenu(menu) {
+      const btnOverview = document.getElementById('menuTeacherOverview');
+      const btnSupervision = document.getElementById('menuTeacherSupervision');
+      const secOverview = document.getElementById('teacherOverviewSection');
+      const secSupervision = document.getElementById('teacherSupervisionSection');
+
+      if (menu === 'supervision') {
+        btnSupervision.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white shadow-sm transition flex items-center justify-center gap-2 cursor-pointer";
+        btnOverview.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center justify-center gap-2 cursor-pointer";
+        secOverview.classList.add('hidden');
+        secSupervision.classList.remove('hidden');
+        renderSupervisionCards();
+      } else {
+        btnOverview.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white shadow-sm transition flex items-center justify-center gap-2 cursor-pointer";
+        btnSupervision.className = "flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-100 transition flex items-center justify-center gap-2 cursor-pointer";
+        secSupervision.classList.add('hidden');
+        secOverview.classList.remove('hidden');
+      }
     }
 
     // ---------- ฟังก์ชันเติมข้อมูลลง Modal คำร้อง (ใช้ร่วมกันทั้ง Student และ Teacher) ----------
@@ -1019,23 +1147,27 @@
 
       if (res.success || Array.isArray(data)) {
         allStudentData = Array.isArray(data) ? data : (data.students || []);
-        
-        const levelSelect = document.getElementById('filterLevel');
-        const currentSelectedLevel = levelSelect.value;
-        levelSelect.innerHTML = '';
-        levelSelect.disabled = false;
-        levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
-
         const levels = [...new Set(allStudentData.map(x => x.level).filter(x => x && x !== '-'))];
-        levels.forEach(lvl => {
-          levelSelect.add(new Option(lvl, lvl));
+        
+        // อัปเดตตัวเลือก Dropdown ระดับชั้นทั้งในหน้าหลักและหน้าจัดการการนิเทศ
+        ['filterLevel', 'supFilterLevel'].forEach(selectId => {
+          const levelSelect = document.getElementById(selectId);
+          if (!levelSelect) return;
+          const prevVal = levelSelect.value;
+          levelSelect.innerHTML = '';
+          levelSelect.disabled = false;
+          levelSelect.add(new Option('-- ระดับชั้นทั้งหมด --', ''));
+          levels.forEach(lvl => levelSelect.add(new Option(lvl, lvl)));
+          if (prevVal && levels.includes(prevVal)) levelSelect.value = prevVal;
         });
 
-        if (currentSelectedLevel && levels.includes(currentSelectedLevel)) {
-          levelSelect.value = currentSelectedLevel;
-        }
-
         filterStudents();
+        renderSupervisionCards();
+
+        // หากหน้าต่างรายงานการนิเทศรายบุคคลเปิดค้างอยู่ ให้รีเฟรชข้อมูลล่าสุดทันที
+        if (currentReportStudentId && !document.getElementById('supervisionReportModal').classList.contains('hidden')) {
+          openSupervisionReportModal(currentReportStudentId);
+        }
       } else {
         showToast("โหลดข้อมูลล้มเหลว: " + (res.error || data.message), false);
       }
@@ -1101,6 +1233,199 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    // ---------- แสดง Card นักศึกษาในเมนู "จัดการการนิเทศ" ----------
+    function renderSupervisionCards() {
+      const grid = document.getElementById('supervisionCardsGrid');
+      if (!grid) return;
+
+      const keyword = String(document.getElementById('supSearchInput')?.value || '').trim().toLowerCase();
+      const lvlFilter = document.getElementById('supFilterLevel')?.value || '';
+      const statusFilter = document.getElementById('supFilterStatus')?.value || '';
+
+      let filtered = allStudentData.filter(st => {
+        const sups = st.supervisions || {};
+        const doneCount = [1, 2, 3].filter(r => Boolean(sups[r])).length;
+
+        if (lvlFilter && st.level !== lvlFilter) return false;
+        if (statusFilter === 'none' && doneCount !== 0) return false;
+        if (statusFilter === 'partial' && (doneCount === 0 || doneCount === 3)) return false;
+        if (statusFilter === 'complete' && doneCount !== 3) return false;
+
+        if (keyword) {
+          const text = `${st.studentId} ${st.fullname} ${st.companyName} ${st.level}`.toLowerCase();
+          if (!text.includes(keyword)) return false;
+        }
+        return true;
+      });
+
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white p-10 rounded-2xl border border-slate-200 text-center text-slate-400">
+            <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
+            <p class="text-sm font-semibold">ไม่พบข้อมูลนักศึกษาตามเงื่อนไขที่ค้นหา</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(st => {
+        const sups = st.supervisions || {};
+        const doneCount = [1, 2, 3].filter(r => Boolean(sups[r])).length;
+        const pct = Math.round((doneCount / 3) * 100);
+
+        let statusBadgeClass = 'bg-slate-100 text-slate-600';
+        let statusLabel = `นิเทศแล้ว ${doneCount}/3 ครั้ง`;
+        if (doneCount === 3) {
+          statusBadgeClass = 'bg-emerald-100 text-emerald-700';
+          statusLabel = 'นิเทศครบ 3/3 ครั้ง';
+        } else if (doneCount > 0) {
+          statusBadgeClass = 'bg-amber-100 text-amber-700';
+        }
+
+        const roundPillsHtml = [1, 2, 3].map(r => {
+          const hasSup = Boolean(sups[r]);
+          return hasSup
+            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                 <i class="fa-solid fa-circle-check text-[10px]"></i> ครั้งที่ ${r}
+               </span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-white text-slate-400 border border-slate-200">
+                 <i class="fa-regular fa-circle text-[10px]"></i> ครั้งที่ ${r}
+               </span>`;
+        }).join('');
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-indigo-300 hover:shadow-md transition flex flex-col justify-between overflow-hidden";
+        card.innerHTML = `
+          <div class="p-4 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">${st.studentId}</span>
+                <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">${st.level}</span>
+              </div>
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${statusBadgeClass}">${statusLabel}</span>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-base text-slate-800 leading-snug">${st.fullname}</h3>
+              <p class="text-xs text-slate-500 mt-1 line-clamp-1" title="${st.companyName}">
+                <i class="fa-solid fa-building text-slate-400 mr-1"></i>${st.companyName}
+              </p>
+            </div>
+          </div>
+
+          <!-- แถบรายงานสถานะการนิเทศ (คลิกเพื่อดูรายงานและรูปภาพ) -->
+          <button type="button" onclick="openSupervisionReportModal('${st.studentId}')" class="w-full text-left bg-slate-50 hover:bg-indigo-50/70 border-t border-slate-200 p-3.5 transition group cursor-pointer">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700 group-hover:text-indigo-700 mb-1.5">
+              <span><i class="fa-solid fa-chart-simple text-indigo-600 mr-1.5"></i>แถบรายงานสถานะการนิเทศ</span>
+              <span class="text-[11px] text-indigo-600 font-semibold inline-flex items-center gap-1">
+                ดูรายงาน <i class="fa-solid fa-chevron-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+              </span>
+            </div>
+
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mb-2.5">
+              <div class="h-full ${doneCount === 3 ? 'bg-emerald-500' : 'bg-indigo-600'} transition-all duration-300" style="width: ${pct}%"></div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5">
+              ${roundPillsHtml}
+            </div>
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // ---------- เปิดหน้าต่างรายงานสถานะการนิเทศและรูปภาพรายบุคคล ----------
+    function openSupervisionReportModal(studentId) {
+      const st = allStudentData.find(x => String(x.studentId).trim() === String(studentId).trim());
+      if (!st) {
+        showToast("ไม่พบข้อมูลนักศึกษา", false);
+        return;
+      }
+
+      currentReportStudentId = st.studentId;
+      const sups = st.supervisions || {};
+      const doneCount = [1, 2, 3].filter(r => Boolean(sups[r])).length;
+      const pct = Math.round((doneCount / 3) * 100);
+
+      document.getElementById('repStudentTitle').innerText = `${st.studentId} - ${st.fullname}`;
+      document.getElementById('repStudentSub').innerText = `ระดับชั้น: ${st.level} | เลขที่: ${st.studentNo} | สถานประกอบการ: ${st.companyName}`;
+      document.getElementById('repProgressText').innerText = `${doneCount} / 3 ครั้ง (${pct}%)`;
+      document.getElementById('repProgressBar').style.width = `${pct}%`;
+
+      const container = document.getElementById('repRoundsContainer');
+      container.innerHTML = '';
+
+      [1, 2, 3].forEach(r => {
+        const sup = sups[r];
+        if (sup) {
+          const imgInfo = formatDriveImageUrls(sup.imageUrl);
+          const photoSectionHtml = imgInfo
+            ? `<div class="mt-3 pt-3 border-t border-emerald-200/70">
+                 <div class="text-xs font-bold text-slate-700 mb-2">
+                   <i class="fa-solid fa-image text-indigo-600 mr-1"></i> ภาพถ่ายประกอบการนิเทศ
+                 </div>
+                 <div class="relative inline-block group cursor-pointer" onclick="openImageLightbox('${imgInfo.thumbUrl}', '${imgInfo.viewUrl}', 'ภาพถ่ายการนิเทศครั้งที่ ${r} - ${st.fullname}')">
+                   <img src="${imgInfo.thumbUrl}" onerror="this.onerror=null;this.src='${imgInfo.fallbackUrl}';" alt="ภาพถ่ายการนิเทศครั้งที่ ${r}" class="max-h-56 w-auto rounded-xl border border-slate-200 shadow-sm object-cover group-hover:opacity-95 transition">
+                   <span class="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 group-hover:underline">
+                     <i class="fa-solid fa-magnifying-glass-plus"></i> คลิกเพื่อขยายดูรูปขนาดเต็ม
+                   </span>
+                 </div>
+               </div>`
+            : `<div class="mt-2 text-xs text-slate-400 italic">
+                 <i class="fa-regular fa-image mr-1"></i> ไม่มีรูปภาพแนบในการนิเทศครั้งนี้
+               </div>`;
+
+          container.innerHTML += `
+            <div class="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="font-bold text-sm text-emerald-900 flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-check text-emerald-600"></i> การนิเทศครั้งที่ ${r}
+                </span>
+                <span class="text-xs font-bold bg-emerald-600 text-white px-2.5 py-0.5 rounded-full">นิเทศแล้ว</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-white p-3 rounded-xl border border-emerald-100">
+                <div><span class="text-slate-400">วันที่นิเทศ:</span> <b class="text-slate-800">${formatThaiDate(sup.date)}</b> <span class="text-slate-400">(${sup.date})</span></div>
+                <div><span class="text-slate-400">ช่องทางการนิเทศ:</span> <b class="text-indigo-700">${sup.channel}</b></div>
+                <div class="sm:col-span-2 pt-1 border-t border-slate-100">
+                  <span class="text-slate-400 block mb-0.5">บันทึกผลการนิเทศ:</span>
+                  <p class="text-slate-700 font-medium leading-relaxed whitespace-pre-line">${sup.note || '-'}</p>
+                </div>
+              </div>
+
+              ${photoSectionHtml}
+            </div>
+          `;
+        } else {
+          container.innerHTML += `
+            <div class="p-4 rounded-2xl bg-slate-50 border border-dashed border-slate-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div class="font-bold text-sm text-slate-700 flex items-center gap-1.5">
+                  <i class="fa-regular fa-clock text-slate-400"></i> การนิเทศครั้งที่ ${r}
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">ยังไม่มีข้อมูลการบันทึกผลการนิเทศในรอบนี้</p>
+              </div>
+              <button type="button" onclick="openSupervision('${st.studentId}', ${r})" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition inline-flex items-center justify-center gap-1.5 shrink-0 cursor-pointer">
+                <i class="fa-solid fa-plus"></i> บันทึกผลการนิเทศครั้งที่ ${r}
+              </button>
+            </div>
+          `;
+        }
+      });
+
+      openModal('supervisionReportModal');
+    }
+
+    function openImageLightbox(thumbUrl, viewUrl, caption) {
+      document.getElementById('lightboxImage').src = thumbUrl;
+      document.getElementById('lightboxExternalLink').href = viewUrl;
+      document.getElementById('lightboxCaption').innerText = caption || 'ภาพถ่ายการนิเทศ';
+      openModal('imageLightboxModal');
     }
 
     function renderTeacherTable(data) {
@@ -1265,7 +1590,6 @@
       }
     }
 
-    // แปลง URL รูปภาพจาก Google Drive ให้แสดงผล Thumbnail และคลิกเปิดดูภาพเต็มได้
     function formatDriveImageUrls(url) {
       if (!url) return null;
       const cleanUrl = String(url).trim();
@@ -1274,7 +1598,7 @@
         const fileId = idMatch[0];
         return {
           thumbUrl: `https://lh3.googleusercontent.com/d/${fileId}`,
-          fallbackUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w600`,
+          fallbackUrl: `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`,
           viewUrl: `https://drive.google.com/file/d/${fileId}/view`
         };
       }
@@ -1282,7 +1606,6 @@
     }
 
     async function openSupervision(studentId, targetRound = null) {
-      // เคลียร์ข้อมูลฟอร์มนิเทศทั้งหมดให้พร้อมกรอกรายการใหม่
       const supForm = document.getElementById('supervisionForm');
       if (supForm) supForm.reset();
 
@@ -1314,10 +1637,10 @@
         history.forEach(h => {
           const imgInfo = formatDriveImageUrls(h.imageUrl);
           const imgHtml = imgInfo 
-            ? `<a href="${imgInfo.viewUrl}" target="_blank" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="block shrink-0 group">
+            ? `<div onclick="openImageLightbox('${imgInfo.thumbUrl}', '${imgInfo.viewUrl}', 'ภาพถ่ายการนิเทศครั้งที่ ${h.round}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="block shrink-0 group cursor-pointer">
                  <img src="${imgInfo.thumbUrl}" onerror="this.onerror=null;this.src='${imgInfo.fallbackUrl}';" class="w-20 h-20 object-cover rounded-lg border border-slate-200 shadow-sm group-hover:scale-105 transition transform" alt="รูปภาพนิเทศ">
                  <span class="block text-[10px] text-center text-indigo-600 font-semibold mt-1 group-hover:underline"><i class="fa-solid fa-magnifying-glass-plus mr-0.5"></i>ดูรูปเต็ม</span>
-               </a>`
+               </div>`
             : '';
 
           box.innerHTML += `
